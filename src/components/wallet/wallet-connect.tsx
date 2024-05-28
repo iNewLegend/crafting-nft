@@ -1,79 +1,17 @@
 import React from "react";
 
-import {
-    Image,
-    Input,
-    Button,
-    CardBody,
-    CardHeader,
-    Divider,
-    Link,
-    Navbar,
-    NavbarContent,
-    NavbarItem,
-    Textarea
-} from "@nextui-org/react";
+import { Button, CardBody, CardHeader, Divider, Link, Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 
 import useSelectedWalletResource from "../../modules/wallet/use-selected-wallet-resource.ts";
 
-import WalletInfo from "./wallet-info.tsx";
-import WalletProviders from "./wallet-providers.tsx";
-
-import styles from "./wallet.module.scss";
-
 import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
 
+import WalletProviders from "./wallet-providers.tsx";
 
-function TabCreateNFT() {
-    const [ name, setName ] = React.useState( "" );
-    const [ description, setDescription ] = React.useState( "" );
-    const [ image, setImage ] = React.useState<string | null>( null );
+import { TabCreateNFT } from "../tabs/tab-create-nft.tsx";
+import { TabHome } from "../tabs/tab-home.tsx";
 
-    const handleImageUpload = ( event: React.ChangeEvent<HTMLInputElement> ) => {
-        const file = event.target.files?.[ 0 ];
-
-        if ( file ) {
-            const reader = new FileReader();
-
-            reader.onload = ( e ) => {
-                setImage( e.target?.result as string );
-            };
-
-            reader.readAsDataURL( file );
-        }
-    };
-
-    return (
-        <div className="flex flex-col gap-4">
-            <Input
-                label="Name"
-                value={ name }
-                onChange={ ( e ) => setName( e.target.value ) }
-            />
-            <Textarea
-                label="Description"
-                value={ description }
-                onChange={ ( e ) => setDescription( e.target.value ) }
-            />
-            <input
-                type="file"
-                onChange={ handleImageUpload }
-            />
-
-            { image && <Image src={ image } alt="Preview"/> }
-
-            <Button onClick={ () => console.log( { name, description, image } ) }>
-                Create NFT
-            </Button>
-        </div>
-    );
-}
-
-function TabHome( props: { selectedWallet: IWallet } ) {
-    return <>
-        <WalletInfo selectedWallet={ props.selectedWallet.provider! } userAccount={ props.selectedWallet.account }/>
-    </>;
-}
+import styles from "./wallet.module.scss";
 
 export default function WalletConnect() {
     const selectedWalletResource = useSelectedWalletResource();
