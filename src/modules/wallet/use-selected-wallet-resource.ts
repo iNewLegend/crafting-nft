@@ -73,6 +73,9 @@ export default function useSelectedWalletResource() {
                 },
                 account: wallet.account
             } ) );
+        },
+        delete: () => {
+            localStorage.removeItem( SELECTED_WALLET_STORAGE_KEY );
         }
     };
 }
