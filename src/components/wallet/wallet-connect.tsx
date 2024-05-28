@@ -1,8 +1,14 @@
-import { CardBody, CardHeader, Divider } from "@nextui-org/react";
 import React from "react";
-import useSelectedWalletResource from "../../modules/wallet/use-selected-wallet-resource.ts";
+
+import { CardBody, CardHeader, Divider } from "@nextui-org/react";
+
 import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
+
+import useSelectedWalletResource from "../../modules/wallet/use-selected-wallet-resource.ts";
+
+import WalletInfo from "./wallet-info.tsx";
 import WalletProviders from "./wallet-providers.tsx";
+
 import styles from "./wallet.module.scss";
 
 export default function WalletConnect() {
@@ -25,17 +31,7 @@ export default function WalletConnect() {
             <Divider/>
 
             <CardBody className="body">
-                <div className={ styles.selected }>
-                    <img src={ selectedWallet.provider.info.icon } alt={ selectedWallet.provider.info.name }/>
-
-                    <div>
-                        { selectedWallet.provider.info.name }
-                    </div>
-
-                    <div>
-                        { selectedWallet.account.slice( 0, 6 ) }...{ selectedWallet.account.slice( -4 ) }
-                    </div>
-                </div>
+                <WalletInfo selectedWallet={ selectedWallet.provider! } userAccount={ selectedWallet.account }/>
             </CardBody>
 
         </div>
