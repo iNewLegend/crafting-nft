@@ -1,0 +1,24 @@
+.wallet .list {
+  @apply mb-5 mt-2;
+}
+.wallet .list .walletButton {
+  @apply me-5;
+}
+.wallet .walletInfo {
+  @apply mt-5 flex flex-col items-center bg-gray-100 rounded-lg shadow-md;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.wallet .walletInfo img {
+  @apply w-20 h-20 object-cover mb-4;
+}
+.wallet .walletInfo .walletName {
+  @apply text-xl font-medium mb-2;
+}
+.wallet .walletInfo .walletAddress {
+  @apply text-sm text-gray-500;
+}
+.wallet .confirmButton {
+  @apply w-full;
+}
+
+/*# sourceMappingURL=wallet.module.css.map */
