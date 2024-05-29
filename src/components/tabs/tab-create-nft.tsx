@@ -8,14 +8,21 @@ import { ipfsGetGateways } from "../../modules/ipfs/ipfs-gateways.ts";
 
 import use from "../../utils/react-use.ts";
 
+import type { GetGatewayResult } from "../../modules/ipfs/ipfs-definitions.ts";
+
 /**
  * This component exist in order to utilize the `React.Suspense` feature in nested `React.Suspense` components
  * Without this it will trigger the `React.Suspense` in the component above.
  */
 function FetchGateways( props: {
-    ui: ( { gateways }: { gateways: Awaited<ReturnType<typeof ipfsGetGateways>> } ) => JSX.Element
+    ui: ( { gateways }: { gateways: GetGatewayResult[] } ) => JSX.Element
 } ) {
-    const [ gateways ] = React.useState<Awaited<ReturnType<typeof ipfsGetGateways>>>( use( ipfsGetGateways ) );
+    const [ gateways ] = React.useState<GetGatewayResult[]>(
+        use( ipfsGetGateways, {
+            // 5 Minutes
+            cacheTTL: 1000 * 60 * 5
+        } )
+    );
 
     return props.ui( { gateways } );
 }
