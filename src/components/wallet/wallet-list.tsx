@@ -10,6 +10,8 @@ export default function WalletList( props: {
 
     return (
         <div className={ styles.list }>
+            { ! providers?.length && <h3>No wallets found</h3> }
+
             { providers?.map( ( provider: EIP6963ProviderDetail ) => (
                 <Button className={ styles.walletButton } key={ provider.info.uuid }
                         onClick={ () => onWalletSelected( provider ) }>
