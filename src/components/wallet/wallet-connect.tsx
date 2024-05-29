@@ -25,7 +25,7 @@ export default function WalletConnect() {
         setSelectedWallet( wallet );
     };
 
-    const logout = () => {
+    const handleWalletLogout = () => {
         selectedWalletResource.delete();
         setSelectedWallet( null );
     };
@@ -54,7 +54,7 @@ export default function WalletConnect() {
 
                 <NavbarContent justify="end">
                     <NavbarItem>
-                        <Button onClick={ logout } as={ Link } color="primary" href="#" variant="flat">
+                        <Button onClick={ handleWalletLogout } as={ Link } color="primary" href="#" variant="flat">
                             Logout
                         </Button>
                     </NavbarItem>
