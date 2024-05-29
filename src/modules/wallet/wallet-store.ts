@@ -10,7 +10,9 @@ const store = {
     value: () => providers || [],
     subscribe: ( callback: () => void ) => {
         if ( providers ) {
-            return callback();
+            callback();
+
+            return () => {}
         }
 
         providers = [];
