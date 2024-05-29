@@ -4,14 +4,20 @@ declare global {
     }
 }
 
-let providers: EIP6963ProviderDetail[] = [];
+let providers: EIP6963ProviderDetail[] | null = null;
 
 const store = {
-    value: () => providers,
+    value: () => providers || [],
     subscribe: ( callback: () => void ) => {
+        if ( providers ) {
+            return callback();
+        }
+
+        providers = [];
+
         function onAnnouncement( event: EIP6963AnnounceProviderEvent ) {
-            if ( providers.map( p => p.info.uuid ).includes( event.detail.info.uuid ) ) return;
-            providers = [ ... providers, event.detail ];
+            if ( providers!.map( p => p.info.uuid ).includes( event.detail.info.uuid ) ) return;
+            providers = [ ... providers!, event.detail ];
             callback()
         }
 
