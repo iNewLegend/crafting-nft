@@ -38,20 +38,20 @@ function onPromiseRejected( promise: WrappedPromise, key: any, reason: any ) {
 }
 
 // Since `React.use` is still experimental, this is a workaround to use it.
-export default function use( callback: () => Promise<any> ) {
-    const promise = callback() as WrappedPromise,
-        // Create checksum of the callback function.
-        key = callback.toString().split( '' ).reduce( ( a, b ) =>
+export default function use( callback: () => Promise<any>, options = {
+    cacheTTL: 0,
+} ) {
+    // Create checksum of the callback function.
+    const key = callback.toString().split( '' ).reduce( ( a, b ) =>
             ( ( a << 5 ) - a + b.charCodeAt( 0 ) ) | 0, 0 );
 
-
     if ( cache.has( key ) ) {
-        const value = cache.get( key );
-
-        promise.finally( () => cache.delete( key ) );
-
-        return value;
+        return cache.get( key );
     }
+
+    const promise = callback() as WrappedPromise;
+
+    promise.finally( () => setTimeout( () => cache.delete( key ), options.cacheTTL ) );
 
     if ( promise.status === 'fulfilled' ) {
         return promise.value;
