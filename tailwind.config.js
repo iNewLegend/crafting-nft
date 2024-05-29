@@ -9,7 +9,12 @@ export default {
         "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
     ],
     theme: {
-        extend: {},
+        extend: {
+            animation: {
+                'ping-delay-200': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite 200ms',
+                'ping-delay-400': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite 400ms',
+            },
+        },
     },
     darkMode: "class",
     plugins: [ nextui() ]
