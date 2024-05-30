@@ -2,6 +2,10 @@ declare global {
     interface WindowEventMap {
         "eip6963:announceProvider": CustomEvent
     }
+
+    interface Window {
+        ethereum: typeof Proxy;
+    }
 }
 
 let providers: EIP6963ProviderDetail[] | null = null;
@@ -9,6 +13,10 @@ let providers: EIP6963ProviderDetail[] | null = null;
 const store = {
     value: () => providers || [],
     subscribe: ( callback: () => void ) => {
+        if ( ! window.ethereum ) {
+            callback();
+        }
+
         if ( providers ) {
             callback();
 
