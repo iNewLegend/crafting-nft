@@ -30,10 +30,14 @@ function FetchGateways( props: {
 function SelectGateway( props: {
     onSelect: ( gateway: IPFSGateway ) => void
 } ) {
+    const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSGateway | null>( null );
+
     const onChange = ( gateways: IPFSGateway[], event: React.ChangeEvent<HTMLSelectElement> ) => {
         const selectedGateway = gateways.find( gateway => gateway.url === event.target.value );
 
         if ( selectedGateway ) {
+            setSelectedGateway( selectedGateway );
+
             props.onSelect( selectedGateway );
         }
     };
@@ -43,10 +47,11 @@ function SelectGateway( props: {
             <FetchGateways ui={
                 ( { gateways } ) => (
                     <Select
+                        isRequired={ ! selectedGateway }
                         items={ gateways }
                         label="IPFS Gateway"
                         placeholder="Select a gateway"
-                        selectedKeys={ [ gateways[ 0 ].url ] }
+                        selectedKeys={ [ selectedGateway?.url ?? 0 ] }
                         onChange={ ( e ) => onChange( gateways, e ) }
                     >
                         { ( gateway =>
@@ -71,6 +76,10 @@ function CreateNFTForm( props: {
     if ( ! props.provider ) {
         return <h1>To create an NFT, you need to have MetaMask installed.</h1>
     }
+
+    const canSubmit = () => {
+        return !! ( name.length && description.length && image && gateway );
+    };
 
     const handleImageUpload = ( event: React.ChangeEvent<HTMLInputElement> ) => {
         const file = event.target.files?.[ 0 ];
@@ -121,7 +130,7 @@ function CreateNFTForm( props: {
             </React.Suspense>
 
 
-            <Button onClick={ () => console.log( { name, description, image, gateway } ) }>
+            <Button isDisabled={ ! canSubmit() } onClick={ () => console.log( { name, description, image, gateway } ) }>
                 Create NFT
             </Button>
         </div>
