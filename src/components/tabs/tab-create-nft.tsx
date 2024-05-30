@@ -4,30 +4,40 @@ import { Button, Image, Input, Select, SelectItem, Textarea } from "@nextui-org/
 
 import detectEthereumProvider from "@metamask/detect-provider";
 
+import type { IPFSGateway } from "../../modules/ipfs/ipfs-definitions.ts";
+
 import { ipfsGetGateways } from "../../modules/ipfs/ipfs-gateways.ts";
 
 import use from "../../utils/react-use.ts";
-
-import type { GetGatewayResult } from "../../modules/ipfs/ipfs-definitions.ts";
 
 /**
  * This component exist in order to utilize the `React.Suspense` feature in nested `React.Suspense` components
  * Without this it will trigger the `React.Suspense` in the component above.
  */
 function FetchGateways( props: {
-    ui: ( { gateways }: { gateways: GetGatewayResult[] } ) => JSX.Element
+    ui: ( { gateways }: { gateways: IPFSGateway[] } ) => JSX.Element
 } ) {
-    const [ gateways ] = React.useState<GetGatewayResult[]>(
+    const [ gateways ] = React.useState<IPFSGateway[]>(
         use( ipfsGetGateways, {
             // 5 Minutes
-            cacheTTL: 1000 * 60 * 5
+            cacheTTL: 1000 * 60 * 5,
         } )
     );
 
     return props.ui( { gateways } );
 }
 
-function SelectGateway() {
+function SelectGateway( props: {
+    onSelect: ( gateway: IPFSGateway ) => void
+} ) {
+    const onChange = ( gateways: IPFSGateway[], event: React.ChangeEvent<HTMLSelectElement> ) => {
+        const selectedGateway = gateways.find( gateway => gateway.url === event.target.value );
+
+        if ( selectedGateway ) {
+            props.onSelect( selectedGateway );
+        }
+    };
+
     return (
         <div>
             <FetchGateways ui={
@@ -37,13 +47,12 @@ function SelectGateway() {
                         label="IPFS Gateway"
                         placeholder="Select a gateway"
                         selectedKeys={ [ gateways[ 0 ].url ] }
-                        required
+                        onChange={ ( e ) => onChange( gateways, e ) }
                     >
                         { ( gateway =>
-                                <SelectItem key={ gateway.url } endContent={<span>{ gateway.responseTime }ms</span>}>
+                            <SelectItem key={ gateway.url } endContent={ <span>{ gateway.responseTime }ms</span> }>
                                 { gateway.name }
-                            </SelectItem>
-                        ) }
+                            </SelectItem> ) }
                     </Select>
                 )
             }/>
@@ -52,17 +61,14 @@ function SelectGateway() {
 }
 
 function CreateNFTForm( props: {
-    setImage: ( value: ( ( ( prevState: ( string | null ) ) => ( string | null ) ) | string | null ) ) => void,
-    name: string,
-    setName: ( value: ( ( ( prevState: string ) => string ) | string ) ) => void,
-    description: string,
-    setDescription: ( value: ( ( ( prevState: string ) => string ) | string ) ) => void,
-    image: string | null,
     provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null
 } ) {
-    const { setImage, name, setName, description, setDescription, image, provider } = props;
+    const [ name, setName ] = React.useState( "" );
+    const [ description, setDescription ] = React.useState( "" );
+    const [ image, setImage ] = React.useState<string | null>( null );
+    const [ gateway, setGateway ] = React.useState<IPFSGateway | null>( null );
 
-    if ( ! provider ) {
+    if ( ! props.provider ) {
         return <h1>To create an NFT, you need to have MetaMask installed.</h1>
     }
 
@@ -83,17 +89,20 @@ function CreateNFTForm( props: {
     return (
         <div className="flex flex-col gap-4">
             <Input
+                isRequired={ ! name.length }
                 label="Name"
                 value={ name }
-                onChange={ ( e ) => setName( e.target.value ) }
+                onValueChange={ setName }
             />
             <Textarea
+                isRequired={ ! description.length }
                 label="Description"
                 value={ description }
-                onChange={ ( e ) => setDescription( e.target.value ) }
+                onValueChange={ setDescription }
             />
 
             <input
+                required
                 type="file"
                 onChange={ handleImageUpload }
             />
@@ -108,11 +117,11 @@ function CreateNFTForm( props: {
                     <span className="animate-ping-delay-400 text-2xl">.</span>
                 </p>
             }>
-                <SelectGateway/>
+                <SelectGateway onSelect={ setGateway }/>
             </React.Suspense>
 
 
-            <Button onClick={ () => console.log( { name, description, image } ) }>
+            <Button onClick={ () => console.log( { name, description, image, gateway } ) }>
                 Create NFT
             </Button>
         </div>
@@ -120,22 +129,10 @@ function CreateNFTForm( props: {
 }
 
 export function TabCreateNFT() {
-    const [ name, setName ] = React.useState( "" );
-    const [ description, setDescription ] = React.useState( "" );
-    const [ image, setImage ] = React.useState<string | null>( null );
-
     // This will trigger the `Suspense` above...
     const provider = use( detectEthereumProvider );
 
     return (
-        <CreateNFTForm
-            setImage={ setImage }
-            name={ name }
-            setName={ setName }
-            description={ description }
-            setDescription={ setDescription }
-            image={ image }
-            provider={ provider }
-        />
+        <CreateNFTForm provider={ provider }/>
     );
 }

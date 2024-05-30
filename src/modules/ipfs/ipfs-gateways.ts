@@ -1,6 +1,6 @@
 // TODO: Those should be in .ENV file
 // URL of the gateways list
-import type { GetGatewayResult } from "./ipfs-definitions.ts";
+import type { IPFSGateway } from "./ipfs-definitions.ts";
 
 const gatewaysUrl: string = 'https://raw.githubusercontent.com/ipfs/public-gateway-checker/main/gateways.json';
 
@@ -17,7 +17,7 @@ export async function ipfsGetGateways( options = {
     const response = await fetch( gatewaysUrl );
     const gateways: string[] = await response.json();
 
-    const results: GetGatewayResult[] = [];
+    const results: IPFSGateway[] = [];
 
     for ( const gateway of gateways ) {
         const baseURL = gateway.replace( ':hash', hash ),
