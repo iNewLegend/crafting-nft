@@ -1,46 +1,65 @@
-import fetch from 'node-fetch';
+import { createHeliaHTTP } from "@helia/http";
 
-// URL of the gateways list
+import { httpGatewayRouting } from "@helia/routers";
+import { exporter } from "ipfs-unixfs-exporter";
+
 const gatewaysUrl = 'https://raw.githubusercontent.com/ipfs/public-gateway-checker/main/gateways.json';
+const knownCID = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG';
 
-// IPFS hash to test with
-const hash = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG';
+// Override the Error constructor
+const originalError = Error;
 
-async function checkGateways() {
+// eslint-disable-next-line no-global-assign
+Error = function ( ...args ) {
+    const error = new originalError( ...args );
+
+    if ( error.message === "socket idle timeout" ) {
+        return error;
+    }
+
+    throw error;
+
+};
+
+Error.captureStackTrace = function ( error, stackTraceLimit ) {
+    return originalError.captureStackTrace( error, stackTraceLimit );
+};
+
+async function testGateways() {
     // Fetch the list of gateways
-    const response = await fetch(gatewaysUrl);
+    const response = await fetch( gatewaysUrl );
     const gateways = await response.json();
 
     const results = [];
 
-    for (const gateway of gateways) {
-        const url = gateway.replace(':hash', hash);
+    for ( const gateway of gateways ) {
+        const heliaHttp = await createHeliaHTTP( {
+            routers: [ httpGatewayRouting( { gateways: [ gateway ] } ) ],
+        } );
 
         try {
             const start = Date.now();
-            const response = await fetch(url);
+
+            await exporter( knownCID, heliaHttp.blockstore, {} );
+
             const elapsed = Date.now() - start;
 
-            if (response.ok) {
-                results.push({ gateway, responseTime: elapsed });
-            } else {
-                console.log(`${gateway} is offline.`);
-            }
-        } catch (error) {
-            console.log(`${gateway} is offline.`);
+            results.push( { url: gateway, responseTime: elapsed } );
+        } catch ( error ) {
+            console.log( `${ gateway } errored` );
         }
-    }
 
+        await heliaHttp.stop();
+    }
     // Sort the results by response time (ascending order)
-    results.sort((a, b) => a.responseTime - b.responseTime);
+    results.sort( ( a, b ) => a.responseTime - b.responseTime );
 
-    // Print the sorted gateways
-    console.log('Gateways sorted by response time');
-    for (const result of results) {
-        console.log(`${result.gateway} - Response time: ${result.responseTime} ms`);
-    }
+    console.log( 'Gateway test results:' );
 
-    return results;
+    results.forEach( result => {
+        console.log( `${ result.url }: ${ result.responseTime } ms` );
+    } );
+
 }
 
-checkGateways().then( console.log );
+testGateways();
