@@ -1,6 +1,8 @@
-import piningGateways from "./assets/pining-gateways.json"
+import { ipfsPingingApisGetAll } from "./apis/";
 
 import { type ProxyOptions } from 'vite';
+
+const piningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getDefaultGateway() );
 
 export function ipfsExportProxyForVite() {
     const proxy: Record<string, string | ProxyOptions> = {};
@@ -27,7 +29,7 @@ export function ipfsExportProxyForVite() {
                     console.debug( 'Received Response from the Target:', proxyRes.statusCode, req.url );
                 } );
             },
-            rewrite: ( path ) => path.replace( `/${ gateway.proxy.pathname }`, '' ),
+            rewrite: ( path ) => path.replace( `/${ gateway.proxy!.pathname }`, '' ),
         };
     }
 

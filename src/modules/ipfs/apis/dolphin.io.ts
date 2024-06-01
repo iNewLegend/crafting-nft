@@ -1,4 +1,4 @@
-import { APIClientBase } from "./api-client-base.ts";
+import { PiningApiClientBase } from "./pining-api-client-base.ts";
 
 import type { AxiosError } from "axios";
 import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
@@ -11,10 +11,10 @@ type TTokens = {
     refresh: string;
 };
 
-export default class DolphinClient extends APIClientBase {
+export default class DolphinClient extends PiningApiClientBase {
     private tokens: TTokens | undefined;
 
-    public static async handshake( gateway: IPFSPiningGateway ) {
+    public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
         const api = new DolphinClient( gateway ),
             tokens = api.getLocalTokens() || api.getStorageTokens();
 
@@ -25,7 +25,7 @@ export default class DolphinClient extends APIClientBase {
         if ( tokens ) {
             const storedIdentityChecksum = api.getStorageIdentityChecksum();
 
-            const isIdentityChanged = storedIdentityChecksum !== currentIdentityChecksum;
+            const isIdentityChanged = gateway.fields.email?.length && storedIdentityChecksum !== currentIdentityChecksum;
 
             // Since the api should blind against the user, and the method is simple "handshake",
             // In other words, the method used to log in and to determine if the user is `logged in`,
@@ -52,6 +52,21 @@ export default class DolphinClient extends APIClientBase {
         } catch ( e ) {
             return e as AxiosError;
         }
+    }
+
+    public static getDefaultGateway(): IPFSPiningGateway {
+        return {
+                "name": "dolphin.io",
+                "fields": {
+                    "endpointUrl": "https://gateway.dolpin.io/api/v1/",
+                    "email": "",
+                    "password": ""
+                },
+                "proxy": {
+                    "host": "{{location.host}}",
+                    "pathname": "dolphin"
+                }
+            }
     }
 
     public async login( email = this.gateway.fields.email, password = this.gateway.fields.password ) {

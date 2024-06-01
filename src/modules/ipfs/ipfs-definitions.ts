@@ -5,7 +5,11 @@ export interface IPFSPublicGateway {
 }
 
 export interface IPFSPiningGateway {
-    index: number;
+    /**
+     * @internal
+     */
+    index?: number;
+
     name: string;
 
     fields: {
@@ -17,7 +21,7 @@ export interface IPFSPiningGateway {
         password?: string;
     } & unknown;
 
-    proxy: {
+    proxy?: {
         pathname: string,
         host: string,
     }

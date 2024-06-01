@@ -1,12 +1,12 @@
-import { APIClientBase } from './api-client-base';
+import { PiningApiClientBase } from './pining-api-client-base.ts';
 
 import type { AxiosError } from "axios";
 import type { IPFSPiningGateway } from '../ipfs-definitions';
 
 const DEFAULT_PINATA_API_TOKEN_STORAGE_KEY = 'api-pinata-token';
 
-export default class PinataClient extends APIClientBase {
-    public static async handshake( gateway: IPFSPiningGateway ) {
+export default class PinataClient extends PiningApiClientBase {
+    public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
         const api = new PinataClient( gateway );
 
         try {
@@ -19,6 +19,16 @@ export default class PinataClient extends APIClientBase {
             return response;
         } catch ( e ) {
             return e as AxiosError;
+        }
+    }
+
+    public static getDefaultGateway(): IPFSPiningGateway {
+        return {
+            "name": "pinata.cloud",
+            "fields": {
+                "endpointUrl": "https://api.pinata.cloud",
+                "token": ""
+            }
         }
     }
 

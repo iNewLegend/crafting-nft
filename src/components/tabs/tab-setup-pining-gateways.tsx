@@ -4,15 +4,15 @@ import { Button, Code, Input, Select, SelectItem } from "@nextui-org/react";
 
 import { AxiosError } from "axios";
 
-import apiLoader from "../../modules/ipfs/apis/index.ts";
-
-import piningGateways from "../../modules/ipfs/assets/pining-gateways.json"
+import { ipfsPingingApisGetAll } from "../../modules/ipfs/apis";
 
 import type { IPFSPiningGateway } from "../../modules/ipfs/ipfs-definitions.ts";
 
-const mappedPublicGateways = ( piningGateways as unknown as IPFSPiningGateway[] ).map( ( gateway, index ) => ( {
-    ... gateway,
+const piningGatewayApis = await ipfsPingingApisGetAll();
+
+const mappedPinningGateways = ( ( await ipfsPingingApisGetAll() ) ).map( ( gateway, index ) => ( {
     index,
+    ... gateway.getDefaultGateway(),
 } ) );
 
 export function TabSetupPiningGateways() {
@@ -21,8 +21,8 @@ export function TabSetupPiningGateways() {
     const [ isConnected, setIsConnected ] = React.useState( false );
     const [ apiError, setApiError ] = React.useState<AxiosError | Error | null>( null );
 
-    const handlePublicGatewaySelection = ( index: number ) => {
-        const gateway = mappedPublicGateways[ index ] as unknown as IPFSPiningGateway;
+    const handlePiningGatewaySelection = ( index: number ) => {
+        const gateway = mappedPinningGateways[ index ];
 
         setSelectedGateway( gateway );
     };
@@ -39,7 +39,7 @@ export function TabSetupPiningGateways() {
 
     const handleTestConnection = async () => {
         try {
-            const api = await apiLoader( selectedGateway!.name );
+            const api = piningGatewayApis.find( ( api ) => api.getName() === selectedGateway!.name )!;
 
             const response = await api.handshake( selectedGateway! );
 
@@ -69,15 +69,14 @@ export function TabSetupPiningGateways() {
         return null;
     };
 
-
     return (
         <div className="flex flex-col gap-4">
             <Select
-                items={ mappedPublicGateways }
+                items={ mappedPinningGateways }
                 selectionMode={ "single" }
                 placeholder="Select a Gateway"
-                selectedKeys={ selectedGateway ? [ selectedGateway.index.toString() ] : [] }
-                onChange={ ( e ) => handlePublicGatewaySelection( Number( e.target.value ) ) }
+                selectedKeys={ selectedGateway ? [ selectedGateway.index!.toString() ] : [] }
+                onChange={ ( e ) => handlePiningGatewaySelection( Number( e.target.value ) ) }
                 isDisabled={ shouldDisableFields }
             >
                 { ( gateway =>

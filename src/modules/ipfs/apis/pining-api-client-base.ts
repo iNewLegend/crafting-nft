@@ -1,14 +1,24 @@
-import axios, { type AxiosError, AxiosInstance, type AxiosResponse, type CreateAxiosDefaults } from "axios";
+import axios from "axios";
+
+import type { AxiosError, AxiosInstance, AxiosResponse, CreateAxiosDefaults } from "axios";
 
 import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
 
-export abstract class APIClientBase {
+export abstract class PiningApiClientBase {
     protected api!: AxiosInstance;
 
     // @ts-expect-error ts(2339)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static handshake( gateway: IPFSPiningGateway ): Promise<AxiosResponse | AxiosError | Error | boolean> {
+    public static handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ): Promise<AxiosResponse | AxiosError | Error | boolean> {
         throw new Error( "ForceMethodImplementation" );
+    }
+
+    public static getDefaultGateway(): IPFSPiningGateway {
+        throw new Error( "ForceMethodImplementation" );
+    }
+
+    public static getName(): string {
+        return this.getDefaultGateway().name;
     }
 
     public constructor( protected gateway: IPFSPiningGateway ) {
@@ -24,10 +34,10 @@ export abstract class APIClientBase {
 
     protected getProxyCreateArgs( extend: CreateAxiosDefaults = {} ) {
         const { gateway } = this,
-            host = gateway.proxy.host === "{{location.host}}" ? window.location.host : gateway.proxy.host;
+            host = gateway.proxy!.host === "{{location.host}}" ? window.location.host : gateway.proxy!.host;
 
         return {
-            baseURL: new URL( `${ location.protocol }//${ host }/${ gateway.proxy.pathname }/` ).toString(),
+            baseURL: new URL( `${ location.protocol }//${ host }/${ gateway.proxy!.pathname }/` ).toString(),
             ... extend,
         }
     }
@@ -44,3 +54,4 @@ export abstract class APIClientBase {
         return this.api;
     }
 }
+
