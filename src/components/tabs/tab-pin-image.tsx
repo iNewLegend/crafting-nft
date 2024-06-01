@@ -8,10 +8,11 @@ import { ipfsPingingApisGetActive } from "../../modules/ipfs/apis";
 import { ipfsGetPublicGateways } from "../../modules/ipfs/ipfs-public-gateways.ts";
 
 import use from "../../utils/react-use.ts";
-import LoadingDots from "../loading/loading-dots.tsx";
 
 import type { PiningApiClientBase } from "../../modules/ipfs/apis/pining-api-client-base.ts";
 import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
+
+import { tabPinImageFormReducer, type TTabPinImageFormState } from "./tab-ping-image/tab-pin-image-state.ts";
 
 function FetchPiningGateways( props: {
     ui: ( { piningApiGateways }: { piningApiGateways: typeof PiningApiClientBase[] } ) => React.ReactElement;
@@ -41,7 +42,6 @@ function FetchPublicGateways( props: {
     return props.ui( { gateways } );
 }
 
-
 function SelectPiningGateway( props: {
     onSelect: ( piningApiGateway: typeof PiningApiClientBase ) => void
 } ) {
@@ -58,7 +58,6 @@ function SelectPiningGateway( props: {
             <div>
                 <FetchPiningGateways ui={
                     ( { piningApiGateways } ) => (
-
                         <Select
                             color="primary"
                             isRequired={ selectedPiningGateway === -1 }
@@ -130,10 +129,10 @@ function SelectPublicGateway( props: {
                             } }
                         >
                             { ( gateway =>
-                                <SelectItem key={ gateways.indexOf( gateway ) }
-                                            endContent={ <span>{ gateway.responseTime }ms</span> }>
-                                    { gateway.name }
-                                </SelectItem>
+                                    <SelectItem key={ gateways.indexOf( gateway ) }
+                                                endContent={ <span>{ gateway.responseTime }ms</span> }>
+                                        { gateway.name }
+                                    </SelectItem>
                             ) }
                         </Select>
                     )
@@ -144,71 +143,67 @@ function SelectPublicGateway( props: {
     );
 }
 
-function CreatePinImageForm( props: {
-    provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null
-} ) {
-    const [ name, setName ] = React.useState( "" ),
-        [ description, setDescription ] = React.useState( "" ),
-        [ image, setImage ] = React.useState<ArrayBuffer | null>( null ),
-        [ file, setFile ] = React.useState<File | null>( null );
-
-    // React doesn't work with types as state, this object is workaround.
-    const [ piningGatewayApi, setPiningGatewayApi ] = React.useState<{
-        api: typeof PiningApiClientBase,
-        name: string,
-    } | null>( null );
-
-    const [ publicGateways, setPublicGateways ] = React.useState<IPFSPublicGateway[]>( [] );
-
-    if ( ! props.provider ) {
-        return <h1>To create an NFT, you need to have MetaMask installed.</h1>
-    }
-
-    const canSubmit = () => {
-        return !! (
-            name.length &&
-            description.length &&
-            image &&
-            piningGatewayApi &&
-            publicGateways.length &&
-            file?.name
-        );
+function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null } ) {
+    const initialState: TTabPinImageFormState = {
+        name: '',
+        description: '',
+        image: null,
+        file: null,
+        piningGatewayApi: null,
+        publicGateways: [],
     };
+
+    const [ state, dispatch ] = React.useReducer( tabPinImageFormReducer, initialState );
 
     const handleImage = ( event: React.ChangeEvent<HTMLInputElement> ) => {
         const file = event.target.files?.[ 0 ];
-
         if ( file ) {
             const reader = new FileReader();
-
             reader.onload = ( e ) => {
-                setImage( e.target?.result as ArrayBuffer );
-                setFile( file );
+                dispatch( {
+                    type: 'SET_IMAGE_FILE',
+                    payload: { image: e.target?.result as ArrayBuffer, file },
+                } );
             };
-
             reader.readAsDataURL( file );
         }
+    };
+
+    const canSubmit = () => {
+        return !! (
+            state.name.length &&
+            state.description.length &&
+            state.image &&
+            state.piningGatewayApi &&
+            state.publicGateways.length &&
+            state.file?.name
+        );
     };
 
     const handleUpload = async () => {
         if ( ! canSubmit() ) {
             return;
         }
+        // Implement the upload logic
     };
+
+    if ( ! props.provider ) {
+        return <h1>To create an NFT, you need to have MetaMask installed.</h1>;
+    }
 
     return (
         <div className="flex flex-col gap-4">
             <Input
-                isRequired={ ! name.length }
+                isRequired={ ! state.name.length }
                 label="Name"
-                value={ name }
-                onValueChange={ setName }
+                value={ state.name }
+                onValueChange={ ( value ) => dispatch( { type: 'SET_NAME', payload: value } ) }
             />
             <Textarea
-                isRequired={ ! description.length }
+                isRequired={ ! state.description.length }
                 label="Description"
-                value={ description }
-                onValueChange={ setDescription }
+                value={ state.description }
+                onValueChange={ ( value ) => dispatch( { type: 'SET_DESCRIPTION', payload: value } ) }
             />
 
             <input
@@ -217,20 +212,17 @@ function CreatePinImageForm( props: {
                 onChange={ handleImage }
             />
 
-            { image && <Image src={ URL.createObjectURL( file! ) }/> }
+            { state.image && <Image src={ URL.createObjectURL( state.file! ) }/> }
 
-            <React.Suspense fallback={ <p className="pb-2 border-2 border-dotted"><LoadingDots/></p> }>
+            <React.Suspense fallback={ <p>Loading...</p> }>
                 <SelectPiningGateway onSelect={ ( api ) => {
-                    setPiningGatewayApi( {
-                        api: api,
-                        name: api.name,
-                    } )
+                    dispatch( { type: "SET_PINING_GATEWAY_API", payload: { api, name: api.name } } );
                 } }/>
             </React.Suspense>
 
-            <React.Suspense fallback={ <p className="pb-2 border-2 border-dotted"><LoadingDots/></p> }>
+            <React.Suspense fallback={ <p>Loading...</p> }>
                 <SelectPublicGateway onSelect={ ( gateways ) => {
-                    setPublicGateways( gateways );
+                    dispatch( { type: 'SET_PUBLIC_GATEWAYS', payload: gateways } );
                 } }/>
             </React.Suspense>
 
