@@ -4,12 +4,26 @@ import { Button, Image, Input, Select, SelectItem, Textarea, Tooltip } from "@ne
 
 import detectEthereumProvider from "@metamask/detect-provider";
 
+import { ipfsPingingApisGetActive } from "../../modules/ipfs/apis";
+import { ipfsGetPublicGateways } from "../../modules/ipfs/ipfs-public-gateways.ts";
+
 import use from "../../utils/react-use.ts";
 import LoadingDots from "../loading/loading-dots.tsx";
 
-import { ipfsGetPublicGateways } from "../../modules/ipfs/ipfs-public-gateways.ts";
-
+import type { APIClientBase } from "../../modules/ipfs/apis/api-client-base.ts";
 import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
+
+function FetchPiningGateways( props: {
+    ui: ( { piningApiGateways }: { piningApiGateways: typeof APIClientBase[] } ) => React.ReactElement;
+} ) {
+    const [ gateways ] = React.useState<typeof APIClientBase[]>(
+        use( ipfsPingingApisGetActive, {
+            cacheTTL: 1000 * 60 * 15,
+        } )
+    );
+
+    return props.ui( { piningApiGateways: gateways } );
+}
 
 /**
  * This component exist in order to utilize the `React.Suspense` feature in nested `React.Suspense` components
@@ -27,6 +41,52 @@ function FetchPublicGateways( props: {
     return props.ui( { gateways } );
 }
 
+
+function SelectPiningGateway( props: {
+    onSelect: ( piningApiGateway: typeof APIClientBase ) => void
+} ) {
+    const [ selectedPiningGateway, setSelectedPiningGateway ] = React.useState( -1 );
+
+    return (
+        <Tooltip color="primary" closeDelay={ 100 } placement={ "right" } showArrow={ true }
+                 content={
+                     <div className="px-1 py-2">
+                         <div className="text-small font-bold">Pining IPFS Gateways</div>
+                         <div className="text-tiny">Select gateways for pinning the content on IPFS</div>
+                     </div>
+                 }>
+            <div>
+                <FetchPiningGateways ui={
+                    ( { piningApiGateways } ) => (
+
+                        <Select
+                            color="primary"
+                            isRequired={ selectedPiningGateway === -1 }
+                            items={ piningApiGateways }
+                            label="IPFS Pining Gateway"
+                            placeholder="Select a gateway"
+                            selectedKeys={ [ selectedPiningGateway.toString() ] }
+                            onChange={ ( e ) => {
+                                const selectedIndex = Number( e.target.value );
+
+                                setTimeout( () => props.onSelect( piningApiGateways[ selectedIndex ] ) );
+
+                                setSelectedPiningGateway( selectedIndex );
+                            } }
+                        >
+                            { gateway => (
+                                <SelectItem key={ piningApiGateways.indexOf( gateway ) }>
+                                    { gateway.getName() }
+                                </SelectItem>
+                            ) }
+                        </Select>
+                    )
+                }/>
+            </div>
+        </Tooltip>
+    );
+}
+
 function SelectPublicGateway( props: {
     onSelect: ( gateways: IPFSPublicGateway[] ) => void
 } ) {
@@ -39,20 +99,22 @@ function SelectPublicGateway( props: {
     };
 
     return (
-        <div>
-            <FetchPublicGateways ui={
-                ( { gateways } ) => (
-                    <Tooltip closeDelay={ 100 } offset={ 10 }
-                             content={
-                                 <div className="px-1 py-2">
-                                     <div className="text-small font-bold">Public IPFS Gateways</div>
-                                     <div className="text-tiny">The selected gateways will be used<br/>to check when the
-                                         pinned image is available over IPFS
-                                     </div>
-                                 </div>
-                             }>
+        <Tooltip color="secondary" closeDelay={ 100 } placement={ "right" } showArrow={ true }
+                 content={
+                     <div className="px-1 py-2">
+                         <div className="text-small font-bold">Public IPFS Gateways</div>
+                         <div className="text-tiny">The selected gateways will be used<br/>to check when the
+                             pinned image is available over IPFS
+                         </div>
+                     </div>
+                 }>
+            <div>
+                <FetchPublicGateways ui={
+                    ( { gateways } ) => (
+
                         <Select
-                            isRequired={ ! selectedPublicGateways }
+                            color="secondary"
+                            isRequired={ ! selectedPublicGateways.length }
                             selectionMode="multiple"
                             items={ gateways }
                             label="IPFS Public Gateway"
@@ -68,34 +130,49 @@ function SelectPublicGateway( props: {
                             } }
                         >
                             { ( gateway =>
-                                    <SelectItem key={ gateways.indexOf( gateway ) }
-                                                endContent={ <span>{ gateway.responseTime }ms</span> }>
-                                        { gateway.name }
-                                    </SelectItem>
+                                <SelectItem key={ gateways.indexOf( gateway ) }
+                                            endContent={ <span>{ gateway.responseTime }ms</span> }>
+                                    { gateway.name }
+                                </SelectItem>
                             ) }
                         </Select>
-                    </Tooltip>
-                )
-            }/>
-        </div>
+                    )
+                }/>
+            </div>
+        </Tooltip>
+
     );
 }
 
 function CreatePinImageForm( props: {
     provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null
 } ) {
-    const [ name, setName ] = React.useState( "" );
-    const [ description, setDescription ] = React.useState( "" );
-    const [ image, setImage ] = React.useState<ArrayBuffer | null>( null );
-    const [ file, setFile ] = React.useState<File | null>( null );
-    const [ gateways, setGateways ] = React.useState<IPFSPublicGateway[]>( [] );
+    const [ name, setName ] = React.useState( "" ),
+        [ description, setDescription ] = React.useState( "" ),
+        [ image, setImage ] = React.useState<ArrayBuffer | null>( null ),
+        [ file, setFile ] = React.useState<File | null>( null );
+
+    // React doesn't work with types as state, this object is workaround.
+    const [ piningGatewayApi, setPiningGatewayApi ] = React.useState<{
+        api: typeof APIClientBase,
+        name: string,
+    } | null>( null );
+
+    const [ publicGateways, setPublicGateways ] = React.useState<IPFSPublicGateway[]>( [] );
 
     if ( ! props.provider ) {
         return <h1>To create an NFT, you need to have MetaMask installed.</h1>
     }
 
     const canSubmit = () => {
-        return !! ( name.length && description.length && image && gateways.length && file?.name );
+        return !! (
+            name.length &&
+            description.length &&
+            image &&
+            piningGatewayApi &&
+            publicGateways.length &&
+            file?.name
+        );
     };
 
     const handleImage = ( event: React.ChangeEvent<HTMLInputElement> ) => {
@@ -117,7 +194,6 @@ function CreatePinImageForm( props: {
         if ( ! canSubmit() ) {
             return;
         }
-
     };
 
     return (
@@ -144,11 +220,19 @@ function CreatePinImageForm( props: {
             { image && <Image src={ URL.createObjectURL( file! ) }/> }
 
             <React.Suspense fallback={ <LoadingDots/> }>
-                <SelectPublicGateway onSelect={ ( gateways ) => {
-                    setGateways( gateways );
+                <SelectPiningGateway onSelect={ ( api ) => {
+                    setPiningGatewayApi( {
+                        api: api,
+                        name: api.name,
+                    } )
                 } }/>
             </React.Suspense>
 
+            <React.Suspense fallback={ <LoadingDots/> }>
+                <SelectPublicGateway onSelect={ ( gateways ) => {
+                    setPublicGateways( gateways );
+                } }/>
+            </React.Suspense>
 
             <Button isDisabled={ ! canSubmit() } onClick={ handleUpload }>
                 Create NFT
