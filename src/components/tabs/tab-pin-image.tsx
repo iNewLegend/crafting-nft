@@ -219,7 +219,7 @@ function CreatePinImageForm( props: {
 
             { image && <Image src={ URL.createObjectURL( file! ) }/> }
 
-            <React.Suspense fallback={ <LoadingDots/> }>
+            <React.Suspense fallback={ <p className="pb-2 border-2 border-dotted"><LoadingDots/></p> }>
                 <SelectPiningGateway onSelect={ ( api ) => {
                     setPiningGatewayApi( {
                         api: api,
@@ -228,7 +228,7 @@ function CreatePinImageForm( props: {
                 } }/>
             </React.Suspense>
 
-            <React.Suspense fallback={ <LoadingDots/> }>
+            <React.Suspense fallback={ <p className="pb-2 border-2 border-dotted"><LoadingDots/></p> }>
                 <SelectPublicGateway onSelect={ ( gateways ) => {
                     setPublicGateways( gateways );
                 } }/>
