@@ -1,4 +1,4 @@
-export interface IPFSGateway {
+export interface IPFSPublicGateway {
     url: string;
     name: string;
     responseTime: number;

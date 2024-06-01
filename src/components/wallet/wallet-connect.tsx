@@ -8,7 +8,7 @@ import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
 
 import WalletProviders from "./wallet-providers.tsx";
 
-import { TabCreateNFT } from "../tabs/tab-create-nft.tsx";
+import { TabPinImage } from "../tabs/tab-pin-image.tsx";
 import { TabHome } from "../tabs/tab-home.tsx";
 
 import styles from "./wallet.module.scss";
@@ -34,6 +34,7 @@ export default function WalletConnect() {
         const tabItems = [
             { name: "home", label: "Home" },
             { name: "create-nft", label: "Create NFT" },
+            { name: "ping-image", label: "Pin Image" },
         ];
 
         return (
@@ -67,8 +68,9 @@ export default function WalletConnect() {
         switch ( currentTab ) {
             case "home":
                 return <TabHome selectedWallet={ selectedWallet! }/>;
-            case "create-nft":
-                return <TabCreateNFT/>;
+
+            case "ping-image":
+                return <TabPinImage/>;
 
             default:
                 return null; //404
