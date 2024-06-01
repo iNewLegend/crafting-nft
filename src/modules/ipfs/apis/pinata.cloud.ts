@@ -22,6 +22,16 @@ export default class PinataClient extends APIClientBase {
         }
     }
 
+    public static getDefaultGateway(): IPFSPiningGateway {
+        return {
+            "name": "pinata.cloud",
+            "fields": {
+                "endpointUrl": "https://api.pinata.cloud",
+                "token": ""
+            }
+        }
+    }
+
     protected getBaseCreateArgs() {
         const fieldToken = this.gateway.fields.token,
             storageToken = this.getStorageToken(),

@@ -54,6 +54,21 @@ export default class DolphinClient extends APIClientBase {
         }
     }
 
+    public static getDefaultGateway(): IPFSPiningGateway {
+        return {
+                "name": "dolphin.io",
+                "fields": {
+                    "endpointUrl": "https://gateway.dolpin.io/api/v1/",
+                    "email": "",
+                    "password": ""
+                },
+                "proxy": {
+                    "host": "{{location.host}}",
+                    "pathname": "dolphin"
+                }
+            }
+    }
+
     public async login( email = this.gateway.fields.email, password = this.gateway.fields.password ) {
         const response = await this.api.post( '/auth/login/', {
             email,
