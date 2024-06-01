@@ -6,7 +6,7 @@ import type { IPFSPiningGateway } from '../ipfs-definitions';
 const DEFAULT_PINATA_API_TOKEN_STORAGE_KEY = 'api-pinata-token';
 
 export default class PinataClient extends APIClientBase {
-    public static async handshake( gateway: IPFSPiningGateway ) {
+    public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
         const api = new PinataClient( gateway );
 
         try {

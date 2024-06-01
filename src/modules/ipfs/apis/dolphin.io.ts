@@ -14,7 +14,7 @@ type TTokens = {
 export default class DolphinClient extends APIClientBase {
     private tokens: TTokens | undefined;
 
-    public static async handshake( gateway: IPFSPiningGateway ) {
+    public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
         const api = new DolphinClient( gateway ),
             tokens = api.getLocalTokens() || api.getStorageTokens();
 
