@@ -1,8 +1,10 @@
-import axios, { type AxiosError, AxiosInstance, type AxiosResponse, type CreateAxiosDefaults } from "axios";
+import axios from "axios";
+
+import type { AxiosError, AxiosInstance, AxiosResponse, CreateAxiosDefaults } from "axios";
 
 import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
 
-export abstract class APIClientBase {
+export abstract class PiningApiClientBase {
     protected api!: AxiosInstance;
 
     // @ts-expect-error ts(2339)
@@ -52,3 +54,4 @@ export abstract class APIClientBase {
         return this.api;
     }
 }
+

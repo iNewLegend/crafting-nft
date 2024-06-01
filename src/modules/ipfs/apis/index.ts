@@ -1,13 +1,13 @@
-import type { APIClientBase } from "./api-client-base";
+import type { PiningApiClientBase } from "./pining-api-client-base.ts";
 
-const apis: { [ name: string ]: () => Promise<typeof APIClientBase> } = {
+const apis: { [ name: string ]: () => Promise<typeof PiningApiClientBase> } = {
     "dolphin.io": async () => ( await import( "./dolphin.io" ) ).default,
     "pinata.cloud": async () => ( (await import( "./pinata.cloud" ) ).default),
 };
 
-let cache: typeof APIClientBase[] | undefined;
+let cache: typeof PiningApiClientBase[] | undefined;
 
-export async function ipfsPingingApisLoad( apiName: string ): Promise<typeof APIClientBase> {
+export async function ipfsPingingApisLoad( apiName: string ): Promise<typeof PiningApiClientBase> {
     if ( cache ) {
         return cache.find( ( api ) => api.name === apiName )!;
     }

@@ -10,13 +10,13 @@ import { ipfsGetPublicGateways } from "../../modules/ipfs/ipfs-public-gateways.t
 import use from "../../utils/react-use.ts";
 import LoadingDots from "../loading/loading-dots.tsx";
 
-import type { APIClientBase } from "../../modules/ipfs/apis/api-client-base.ts";
+import type { PiningApiClientBase } from "../../modules/ipfs/apis/pining-api-client-base.ts";
 import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
 
 function FetchPiningGateways( props: {
-    ui: ( { piningApiGateways }: { piningApiGateways: typeof APIClientBase[] } ) => React.ReactElement;
+    ui: ( { piningApiGateways }: { piningApiGateways: typeof PiningApiClientBase[] } ) => React.ReactElement;
 } ) {
-    const [ gateways ] = React.useState<typeof APIClientBase[]>(
+    const [ gateways ] = React.useState<typeof PiningApiClientBase[]>(
         use( ipfsPingingApisGetActive, {
             cacheTTL: 1000 * 60 * 15,
         } )
@@ -43,7 +43,7 @@ function FetchPublicGateways( props: {
 
 
 function SelectPiningGateway( props: {
-    onSelect: ( piningApiGateway: typeof APIClientBase ) => void
+    onSelect: ( piningApiGateway: typeof PiningApiClientBase ) => void
 } ) {
     const [ selectedPiningGateway, setSelectedPiningGateway ] = React.useState( -1 );
 
@@ -154,7 +154,7 @@ function CreatePinImageForm( props: {
 
     // React doesn't work with types as state, this object is workaround.
     const [ piningGatewayApi, setPiningGatewayApi ] = React.useState<{
-        api: typeof APIClientBase,
+        api: typeof PiningApiClientBase,
         name: string,
     } | null>( null );
 

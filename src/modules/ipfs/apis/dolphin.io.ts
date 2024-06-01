@@ -1,4 +1,4 @@
-import { APIClientBase } from "./api-client-base.ts";
+import { PiningApiClientBase } from "./pining-api-client-base.ts";
 
 import type { AxiosError } from "axios";
 import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
@@ -11,7 +11,7 @@ type TTokens = {
     refresh: string;
 };
 
-export default class DolphinClient extends APIClientBase {
+export default class DolphinClient extends PiningApiClientBase {
     private tokens: TTokens | undefined;
 
     public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
