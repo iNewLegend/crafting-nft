@@ -8,6 +8,10 @@ const apis: { [ name: string ]: () => Promise<typeof APIClientBase> } = {
 let cache: typeof APIClientBase[] | undefined;
 
 export async function ipfsPingingApisLoad( apiName: string ): Promise<typeof APIClientBase> {
+    if ( cache ) {
+        return cache.find( ( api ) => api.name === apiName )!;
+    }
+
     if ( ! apis[ apiName ] ) {
         throw new Error( `Unknown API name: ${ apiName }` );
     }
