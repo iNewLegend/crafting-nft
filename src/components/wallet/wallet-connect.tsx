@@ -2,19 +2,21 @@ import React from "react";
 
 import { Button, CardBody, CardHeader, Divider, Link, Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 
-import useSelectedWalletResource from "../../modules/wallet/use-selected-wallet-resource.ts";
+import useSelectedWallet from "../../modules/wallet/use-selected-wallet.ts";
 
 import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
 
+import { TabSetupPiningGateways } from "../tabs/tab-setup-pining-gateways.tsx";
+
 import WalletProviders from "./wallet-providers.tsx";
 
-import { TabCreateNFT } from "../tabs/tab-create-nft.tsx";
+import { TabPinImage } from "../tabs/tab-pin-image.tsx";
 import { TabHome } from "../tabs/tab-home.tsx";
 
 import styles from "./wallet.module.scss";
 
 export default function WalletConnect() {
-    const selectedWalletResource = useSelectedWalletResource();
+    const selectedWalletResource = useSelectedWallet();
 
     const [ selectedWallet, setSelectedWallet ] = React.useState( selectedWalletResource.read() );
 
@@ -33,7 +35,8 @@ export default function WalletConnect() {
     const TabNavbar = () => {
         const tabItems = [
             { name: "home", label: "Home" },
-            { name: "create-nft", label: "Create NFT" },
+            { name: "setup-pining-gateways", label: "Setup Pinning Gateways" },
+            { name: "ping-image", label: "Pin Image" },
         ];
 
         return (
@@ -67,8 +70,12 @@ export default function WalletConnect() {
         switch ( currentTab ) {
             case "home":
                 return <TabHome selectedWallet={ selectedWallet! }/>;
-            case "create-nft":
-                return <TabCreateNFT/>;
+
+            case "ping-image":
+                return <TabPinImage/>;
+
+            case "setup-pining-gateways":
+                return <TabSetupPiningGateways />;
 
             default:
                 return null; //404
