@@ -25,7 +25,7 @@ Error.captureStackTrace = function ( error, stackTraceLimit ) {
     return originalError.captureStackTrace( error, stackTraceLimit );
 };
 
-async function testGateways() {
+async function testPublicGateways() {
     // Fetch the list of gateways
     const response = await fetch( gatewaysUrl );
     const gateways = await response.json();
@@ -62,4 +62,4 @@ async function testGateways() {
 
 }
 
-testGateways();
+testPublicGateways();
