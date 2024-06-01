@@ -25,7 +25,7 @@ export default class DolphinClient extends APIClientBase {
         if ( tokens ) {
             const storedIdentityChecksum = api.getStorageIdentityChecksum();
 
-            const isIdentityChanged = storedIdentityChecksum !== currentIdentityChecksum;
+            const isIdentityChanged = gateway.fields.email?.length && storedIdentityChecksum !== currentIdentityChecksum;
 
             // Since the api should blind against the user, and the method is simple "handshake",
             // In other words, the method used to log in and to determine if the user is `logged in`,
