@@ -16,7 +16,7 @@ import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
  * Without this it will trigger the `React.Suspense` in the component above.
  */
 function FetchPublicGateways( props: {
-    ui: ( { gateways }: { gateways: IPFSPublicGateway[] } ) => JSX.Element
+    ui: ( { gateways }: { gateways: IPFSPublicGateway[] } ) => React.ReactElement;
 } ) {
     const [ gateways ] = React.useState<IPFSPublicGateway[]>(
         use( ipfsGetPublicGateways, {

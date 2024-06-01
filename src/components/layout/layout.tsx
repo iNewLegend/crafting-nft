@@ -12,4 +12,4 @@ export default function Layout( { children }: { children: React.ReactNode } ) {
             </Card>
         </div>
     );
-};
+}

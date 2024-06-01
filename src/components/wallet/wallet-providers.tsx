@@ -45,4 +45,4 @@ export default function WalletProviders( props: { onWalletConnected: ( wallet: I
             </CardFooter> }
         </div>
     )
-};
+}
