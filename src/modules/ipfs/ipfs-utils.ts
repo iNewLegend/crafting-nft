@@ -2,12 +2,12 @@ import { ipfsPingingApisGetAll } from "./apis/";
 
 import { type ProxyOptions } from 'vite';
 
-const piningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getDefaultGateway() );
+const pinningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getDefaultGateway() );
 
 export function ipfsExportProxyForVite() {
     const proxy: Record<string, string | ProxyOptions> = {};
 
-    for ( const [ , gateway ] of Object.entries( piningGateways ) ) {
+    for ( const [ , gateway ] of Object.entries( pinningGateways ) ) {
         if ( ! gateway.proxy ) {
             continue;
         }

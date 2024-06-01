@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import WalletStore from "./wallet-store.ts";
+import WalletStore from "./wallet-store";
 
 const useWalletStore = () => useSyncExternalStore(
     WalletStore.subscribe,

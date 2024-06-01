@@ -1,14 +1,13 @@
 import { Button, CardBody, CardFooter, CardHeader, Divider } from '@nextui-org/react'
 
-import useWalletProviders from "../../modules/wallet/use-wallet-providers.ts";
+import useWalletProviders from "../../modules/wallet/use-wallet-providers";
 
-import WalletInfo from "./wallet-info.tsx";
-
-import WalletList from "./wallet-list.tsx";
+import WalletInfo from "./wallet-info";
+import WalletList from "./wallet-list";
 
 import styles from './wallet.module.scss';
 
-import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
+import type { IWallet } from "../../modules/wallet/wallet-definitions";
 
 export default function WalletProviders( props: { onWalletConnected: ( wallet: IWallet ) => void } ) {
     const { providers, selectedWallet, userAccount, onWalletSelected } = useWalletProviders();

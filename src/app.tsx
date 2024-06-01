@@ -1,8 +1,8 @@
 import React from "react";
 
-import Layout from "./components/layout/layout.tsx";
-import LoadingSpinner from "./components/loading/loading-spinner.tsx";
-import WalletConnect from "./components/wallet/wallet-connect.tsx";
+import Layout from "./components/layout/layout";
+import LoadingSpinner from "./components/loading/loading-spinner";
+import WalletConnect from "./components/wallet/wallet-connect";
 
 function App() {
     return (

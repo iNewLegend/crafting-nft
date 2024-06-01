@@ -6,22 +6,22 @@ import { AxiosError } from "axios";
 
 import { ipfsPingingApisGetAll } from "../../modules/ipfs/apis";
 
-import type { IPFSPiningGateway } from "../../modules/ipfs/ipfs-definitions.ts";
+import type { IPFSPinningGateway } from "../../modules/ipfs/ipfs-definitions";
 
-const piningGatewayApis = await ipfsPingingApisGetAll();
+const pinningGatewayApis = await ipfsPingingApisGetAll();
 
 const mappedPinningGateways = ( ( await ipfsPingingApisGetAll() ) ).map( ( gateway, index ) => ( {
     index,
     ... gateway.getDefaultGateway(),
 } ) );
 
-export function TabSetupPiningGateways() {
-    const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSPiningGateway | null>( null );
+export function TabSetupPinningGateways() {
+    const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSPinningGateway | null>( null );
     const [ shouldDisableFields, setShouldDisableFields ] = React.useState( false );
     const [ isConnected, setIsConnected ] = React.useState( false );
     const [ apiError, setApiError ] = React.useState<AxiosError | Error | null>( null );
 
-    const handlePiningGatewaySelection = ( index: number ) => {
+    const handlePinningGatewaySelection = ( index: number ) => {
         const gateway = mappedPinningGateways[ index ];
 
         setSelectedGateway( gateway );
@@ -39,7 +39,7 @@ export function TabSetupPiningGateways() {
 
     const handleTestConnection = async () => {
         try {
-            const api = piningGatewayApis.find( ( api ) => api.getName() === selectedGateway!.name )!;
+            const api = pinningGatewayApis.find( ( api ) => api.getName() === selectedGateway!.name )!;
 
             const response = await api.handshake( selectedGateway! );
 
@@ -76,7 +76,7 @@ export function TabSetupPiningGateways() {
                 selectionMode={ "single" }
                 placeholder="Select a Gateway"
                 selectedKeys={ selectedGateway ? [ selectedGateway.index!.toString() ] : [] }
-                onChange={ ( e ) => handlePiningGatewaySelection( Number( e.target.value ) ) }
+                onChange={ ( e ) => handlePinningGatewaySelection( Number( e.target.value ) ) }
                 isDisabled={ shouldDisableFields }
             >
                 { ( gateway =>

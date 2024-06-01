@@ -1,7 +1,7 @@
-import { PiningApiClientBase } from "./pining-api-client-base.ts";
+import { PinningApiClientBase } from "./pinning-api-client-base";
 
 import type { AxiosError } from "axios";
-import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
+import type { IPFSPinningGateway } from "../ipfs-definitions";
 
 const DEFAULT_DOLPHIN_API_TOKEN_STORAGE_KEY = "api-dolphin-tokens",
     DEFAULT_DOLPHIN_API_IDENTITY_STORAGE_KEY = "api-dolphin-identity";
@@ -11,10 +11,10 @@ type TTokens = {
     refresh: string;
 };
 
-export default class DolphinClient extends PiningApiClientBase {
+export default class DolphinClient extends PinningApiClientBase {
     private tokens: TTokens | undefined;
 
-    public static async handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ) {
+    public static async handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ) {
         const api = new DolphinClient( gateway ),
             tokens = api.getLocalTokens() || api.getStorageTokens();
 
@@ -54,7 +54,7 @@ export default class DolphinClient extends PiningApiClientBase {
         }
     }
 
-    public static getDefaultGateway(): IPFSPiningGateway {
+    public static getDefaultGateway(): IPFSPinningGateway {
         return {
                 "name": "dolphin.io",
                 "fields": {

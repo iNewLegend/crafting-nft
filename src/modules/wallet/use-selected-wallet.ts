@@ -1,10 +1,10 @@
-import use from "../../utils/react-use.ts";
+import use from "../../utils/react-use";
 
-import walletHandleConnect from "./wallet-handle-connect.ts";
+import walletHandleConnect from "./wallet-handle-connect";
 
 import store from './wallet-store.ts';
 
-import type { IWallet } from "./wallet-definitions.ts";
+import type { IWallet } from "./wallet-definitions";
 
 const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet';
 

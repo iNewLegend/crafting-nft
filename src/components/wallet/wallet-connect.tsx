@@ -2,16 +2,16 @@ import React from "react";
 
 import { Button, CardBody, CardHeader, Divider, Link, Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 
-import useSelectedWallet from "../../modules/wallet/use-selected-wallet.ts";
+import useSelectedWallet from "../../modules/wallet/use-selected-wallet";
 
-import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
+import { TabSetupPinningGateways } from "../tabs/tab-setup-pinning-gateways";
 
-import { TabSetupPiningGateways } from "../tabs/tab-setup-pining-gateways.tsx";
+import { TabPinImage } from "../tabs/tab-pin-image";
+import { TabHome } from "../tabs/tab-home";
 
-import WalletProviders from "./wallet-providers.tsx";
+import WalletProviders from "./wallet-providers";
 
-import { TabPinImage } from "../tabs/tab-pin-image.tsx";
-import { TabHome } from "../tabs/tab-home.tsx";
+import type { IWallet } from "../../modules/wallet/wallet-definitions";
 
 import styles from "./wallet.module.scss";
 
@@ -35,7 +35,7 @@ export default function WalletConnect() {
     const TabNavbar = () => {
         const tabItems = [
             { name: "home", label: "Home" },
-            { name: "setup-pining-gateways", label: "Setup Pinning Gateways" },
+            { name: "setup-pinning-gateways", label: "Setup Pinning Gateways" },
             { name: "ping-image", label: "Pin Image" },
         ];
 
@@ -74,8 +74,8 @@ export default function WalletConnect() {
             case "ping-image":
                 return <TabPinImage/>;
 
-            case "setup-pining-gateways":
-                return <TabSetupPiningGateways />;
+            case "setup-pinning-gateways":
+                return <TabSetupPinningGateways />;
 
             default:
                 return null; //404

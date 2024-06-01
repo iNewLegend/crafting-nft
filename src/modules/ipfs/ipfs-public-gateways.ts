@@ -7,7 +7,7 @@ import { CID } from 'multiformats/cid';
 
 import publicGateways from "./assets/public-gateways.json"
 
-import type { IPFSPublicGateway } from "./ipfs-definitions.ts";
+import type { IPFSPublicGateway } from "./ipfs-definitions";
 
 const DEFAULT_IPFS_TEST_HASH: string = 'QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG',
     DEFAULT_IPFS_GATEWAY_TIMEOUT: number = 5000;
