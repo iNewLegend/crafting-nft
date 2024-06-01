@@ -6,6 +6,8 @@ import useSelectedWallet from "../../modules/wallet/use-selected-wallet.ts";
 
 import type { IWallet } from "../../modules/wallet/wallet-definitions.ts";
 
+import { TabSetupPiningGateways } from "../tabs/tab-setup-pining-gateways.tsx";
+
 import WalletProviders from "./wallet-providers.tsx";
 
 import { TabPinImage } from "../tabs/tab-pin-image.tsx";
@@ -33,7 +35,7 @@ export default function WalletConnect() {
     const TabNavbar = () => {
         const tabItems = [
             { name: "home", label: "Home" },
-            { name: "create-nft", label: "Create NFT" },
+            { name: "setup-pining-gateways", label: "Setup Pinning Gateways" },
             { name: "ping-image", label: "Pin Image" },
         ];
 
@@ -71,6 +73,9 @@ export default function WalletConnect() {
 
             case "ping-image":
                 return <TabPinImage/>;
+
+            case "setup-pining-gateways":
+                return <TabSetupPiningGateways />;
 
             default:
                 return null; //404
