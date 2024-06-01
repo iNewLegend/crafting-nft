@@ -6,7 +6,6 @@ import store from './wallet-store.ts';
 
 import type { IWallet } from "./wallet-definitions.ts";
 
-
 const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet';
 
 function getSelectedWallet() {

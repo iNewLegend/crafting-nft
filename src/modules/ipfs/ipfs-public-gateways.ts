@@ -55,7 +55,6 @@ export async function ipfsGetPublicGateways( options = {
             if ( result.value.name === "about" ) {
                 const elapsed = Date.now() - start;
 
-                // TODO: Rename to name to host.
                 results.push( { url: gateway, responseTime: elapsed, name } );
             }
         } catch ( error ) { /* empty */
