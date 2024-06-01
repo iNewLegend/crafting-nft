@@ -7,7 +7,6 @@ import WalletConnect from "./components/wallet/wallet-connect.tsx";
 function App() {
     return (
         <Layout>
-            <React.Suspense fallback={ <Loading/> }>
             <React.Suspense fallback={ <LoadingSpinner/> }>
                 <WalletConnect/>
             </React.Suspense>
