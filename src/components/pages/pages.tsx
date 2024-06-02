@@ -22,8 +22,8 @@ const Pages = () => {
 
     const walletConnectContext = React.useContext( WalletContext );
 
-    const getCurrentTab = ( currentTab: string ) => {
-        switch ( currentTab ) {
+    const getCurrentPage = ( page: string ) => {
+        switch ( page ) {
             default:
             case "home":
                 return <PageHome selectedWallet={ walletConnectContext.selected! }/>;
@@ -57,7 +57,7 @@ const Pages = () => {
             <Divider id="pages-divider" className="mb-3 divider"/>
 
             <React.Suspense fallback={ <LoadingDots /> }>
-                { getCurrentTab( currentPage ) }
+                { getCurrentPage( currentPage ) }
             </React.Suspense>
         </div>
     )

@@ -16,13 +16,13 @@ import {
 
 import styles from "./layout.module.scss";
 
-type TTabNavbarProps = {
+type TNavbarProps = {
     selected: string;
     items: { name: string; label: string }[];
 
     endContentButton: React.ReactNode;
 
-    onSelected: ( tabName: string ) => void;
+    onSelected: ( pageName: string ) => void;
 };
 
 const navbarBaseProps = {
@@ -33,14 +33,14 @@ const navbarBaseProps = {
     }
 };
 
-const TabsNavbar: React.FC<TTabNavbarProps> = ( { selected, items, onSelected, endContentButton } ) => {
+const Navbar: React.FC<TNavbarProps> = ( { selected, items, onSelected, endContentButton } ) => {
     const [ isOpen, setIsOpen ] = React.useState( false );
 
-    const onClickInternal = ( tabName: string ) => {
+    const onClickInternal = ( pageName: string ) => {
         setIsOpen( false );
 
         setTimeout( () => {
-            onSelected( tabName );
+            onSelected( pageName );
         } );
     };
 
@@ -82,4 +82,4 @@ const TabsNavbar: React.FC<TTabNavbarProps> = ( { selected, items, onSelected, e
     );
 };
 
-export default TabsNavbar;
+export default Navbar;
