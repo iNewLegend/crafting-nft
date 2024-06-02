@@ -1,0 +1,78 @@
+@import "../../vars";
+
+// TODO: Use variables from "vars.scss" file to make the layout dimension dynamic.
+
+.layout {
+    @apply flex justify-center items-center pt-[500px];
+
+    .container {
+        @apply w-full max-w-[1200px] flex flex-col;
+    }
+
+    .header {
+        @apply w-full p-4 bg-gray-800 text-white text-center justify-center;
+
+        h2 {
+            @apply text-2xl;
+        }
+    }
+
+    .body {
+        @apply min-h-[260px];
+        @apply w-full text-gray-800;
+    }
+}
+
+.navbar {
+    @apply mt-[20px];
+}
+
+body .navbarMenu {
+    position: absolute;
+
+    bottom: 0;
+    margin: 0 auto;
+
+    // Use the height of `.container`
+    width: inherit;
+    max-width: inherit;
+    max-height: calc(100% - var(--navbar-height));
+
+    background: rgba(255, 255, 255, 0.26);
+
+    padding-top: calc( var(--navbar-height) + 5px );
+    padding-bottom: calc( var(--navbar-height) + 5px );
+
+    border-radius: 0 0 20px 20px;
+
+    --transition-duration: 1s;
+
+    transition: opacity var(--transition-duration);
+
+    &[data-open="true"] {
+        .menuContainer {
+            @apply animate-fadeIn;
+            opacity: 1;
+        }
+    }
+}
+
+.menuContainer {
+    opacity: 0;
+
+    // Same as pages?
+    @apply ps-[100px] pb-[100px];
+
+    @apply relative;
+    @apply top-[50px];
+
+    overflow: hidden;
+
+    li {
+        @apply mb-3;
+
+        &:last-child {
+            @apply mb-0;
+        }
+    }
+}
