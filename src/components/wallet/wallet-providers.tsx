@@ -1,47 +1,45 @@
-import { Button, CardBody, CardFooter, CardHeader, Divider } from '@nextui-org/react'
+import { Button, Divider } from '@nextui-org/react'
 
 import useWalletProviders from "../../modules/wallet/use-wallet-providers";
 
 import WalletInfo from "./wallet-info";
 import WalletList from "./wallet-list";
 
-import styles from './wallet.module.scss';
-
 import type { IWallet } from "../../modules/wallet/wallet-definitions";
+
+import styles from "./wallet.module.scss";
 
 export default function WalletProviders( props: { onWalletConnected: ( wallet: IWallet ) => void } ) {
     const { providers, selectedWallet, userAccount, onWalletSelected } = useWalletProviders();
 
+    const onConnectClick = () => {
+        props.onWalletConnected( {
+            provider: selectedWallet!,
+            account: userAccount
+        } );
+    };
+
     return (
-        <div className={ styles.wallet }>
-            <CardHeader className="header">
-                <h2>Select Wallet</h2>
-            </CardHeader>
+        <div className={ styles.walletProviders }>
+            <div className="">
+                <WalletList providers={ providers || [] } onWalletSelected={ onWalletSelected }/>
+            </div>
 
-            <Divider/>
-
-            <CardBody className="body">
-                <div className="">
-                    <WalletList providers={ providers } onWalletSelected={ onWalletSelected }/>
-                </div>
-
+            <div>
                 { userAccount && <>
-                    <Divider/>
-
                     <WalletInfo selectedWallet={ selectedWallet! } userAccount={ userAccount }/>
                 </> }
-            </CardBody>
+            </div>
 
-            { userAccount && <CardFooter className="footer">
-                <Button className={ styles.confirmButton }
-                        onClick={ () => props.onWalletConnected( {
-                            provider: selectedWallet!,
-                            account: userAccount
-                        } ) }
-                >
-                    Connect Wallet
-                </Button>
-            </CardFooter> }
+            { userAccount &&
+                <div className="mt-3">
+                    <Divider className="mb-3"/>
+
+                    <Button className={styles.walletConnectButton} onClick={ onConnectClick } >
+                        Connect Wallet
+                    </Button>
+                </div>
+            }
         </div>
     )
 }
