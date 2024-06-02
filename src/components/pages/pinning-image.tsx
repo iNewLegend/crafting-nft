@@ -9,7 +9,9 @@ import use from "../../utils/react-use";
 import LoadingDots from "../loading/loading-dots";
 
 import { pinningImageFormReducer, type TPinningImageFormState } from "./pining-image/pinning-image-state";
-import { SelectPinningGateway, SelectPublicGateways } from "./pining-image/pinning-image-gateway-selection";
+
+import { SelectPublicGateways } from "../gateways-selection/select-public-gateways.tsx";
+import { SelectPinningGateway } from "../gateways-selection/select-pinning-gateway.tsx";
 
 function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null } ) {
     const initialState: TPinningImageFormState = {
