@@ -13,7 +13,7 @@ function getSelectedWallet() {
         const walletFromStorage = localStorage.getItem( SELECTED_WALLET_STORAGE_KEY );
 
         if ( ! walletFromStorage ) {
-            reject( "Wallet not saved" );
+            reject( "No wallet in the storage" );
 
             return;
         }
@@ -25,7 +25,7 @@ function getSelectedWallet() {
                 account: accountFromStorage
             } = JSON.parse( walletFromStorage );
 
-            const providerInfo = providers.find(
+            const providerInfo = providers?.find(
                 ( i ) => i.info.name === providerFromStorage.info.name
             );
 
@@ -39,7 +39,7 @@ function getSelectedWallet() {
                 }
             }
 
-            reject( "Providers not found" );
+            reject( "No providers found" );
         } );
     } );
 }

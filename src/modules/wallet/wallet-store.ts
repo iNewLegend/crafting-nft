@@ -11,7 +11,7 @@ declare global {
 let providers: EIP6963ProviderDetail[] | null = null;
 
 const store = {
-    value: () => providers || [],
+    value: () => providers,
     subscribe: ( callback: () => void ) => {
         if ( ! window.ethereum ) {
             callback();
