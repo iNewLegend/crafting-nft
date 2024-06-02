@@ -1,7 +1,7 @@
 import type { PinningApiClientBase } from "../../../modules/ipfs/apis/pinning-api-client-base";
 import type { IPFSPublicGateway } from "../../../modules/ipfs/ipfs-definitions";
 
-export type TTabPinImageFormState = {
+export type TPinningImageFormState = {
     name: string;
     description: string;
     image: ArrayBuffer | null;
@@ -13,14 +13,14 @@ export type TTabPinImageFormState = {
     publicGateways: IPFSPublicGateway[];
 };
 
-export type TTabPinImageFormActions =
+export type TPinningImageFormActions =
     | { type: 'SET_NAME'; payload: string }
     | { type: 'SET_DESCRIPTION'; payload: string }
     | { type: 'SET_IMAGE_FILE'; payload: { image: ArrayBuffer; file: File } }
-    | { type: 'SET_PINNING_GATEWAY_API'; payload: TTabPinImageFormState['pinningGatewayApi'] }
+    | { type: 'SET_PINNING_GATEWAY_API'; payload: TPinningImageFormState['pinningGatewayApi'] }
     | { type: 'SET_PUBLIC_GATEWAYS'; payload: IPFSPublicGateway[] };
 
-export function tabPinImageFormReducer( state: TTabPinImageFormState, action: TTabPinImageFormActions ): TTabPinImageFormState {
+export function pinningImageFormReducer( state: TPinningImageFormState, action: TPinningImageFormActions ): TPinningImageFormState {
     switch ( action.type ) {
         case 'SET_NAME':
             return { ... state, name: action.payload };

@@ -15,7 +15,7 @@ const mappedPinningGateways = ( ( await ipfsPingingApisGetAll() ) ).map( ( gatew
     ... gateway.getDefaultGateway(),
 } ) );
 
-export function TabSetupPinningGateways() {
+export default function PinningGateways() {
     const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSPinningGateway | null>( null );
     const [ shouldDisableFields, setShouldDisableFields ] = React.useState( false );
     const [ isConnected, setIsConnected ] = React.useState( false );
@@ -70,7 +70,7 @@ export function TabSetupPinningGateways() {
     };
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pt-[30px]">
             <Select
                 items={ mappedPinningGateways }
                 selectionMode={ "single" }

@@ -1,11 +1,11 @@
 import React from "react";
 
 import Layout from "./components/layout/layout";
-import Pages from "./components/pages/pages.tsx";
+import Pages from "./components/pages/pages";
 import LoadingSpinner from "./components/loading/loading-spinner";
 import WalletConnect from "./components/wallet/wallet-connect";
 
-import type { IWallet } from "./modules/wallet/wallet-definitions.ts";
+import type { IWallet } from "./modules/wallet/wallet-definitions";
 
 import "./app.scss";
 

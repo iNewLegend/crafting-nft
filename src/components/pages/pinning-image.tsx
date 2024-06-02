@@ -8,11 +8,11 @@ import use from "../../utils/react-use";
 
 import LoadingDots from "../loading/loading-dots";
 
-import { tabPinImageFormReducer, type TTabPinImageFormState } from "./tab-pin-image/tab-pin-image-state";
-import { SelectPinningGateway, SelectPublicGateways } from "./tab-pin-image/tab-pin-image-gateway-selection";
+import { pinningImageFormReducer, type TPinningImageFormState } from "./pining-image/pinning-image-state";
+import { SelectPinningGateway, SelectPublicGateways } from "./pining-image/pinning-image-gateway-selection";
 
 function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null } ) {
-    const initialState: TTabPinImageFormState = {
+    const initialState: TPinningImageFormState = {
         name: '',
         description: '',
         image: null,
@@ -21,7 +21,7 @@ function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detect
         publicGateways: [],
     };
 
-    const [ state, dispatch ] = React.useReducer( tabPinImageFormReducer, initialState );
+    const [ state, dispatch ] = React.useReducer( pinningImageFormReducer, initialState );
 
     const handleImage = ( event: React.ChangeEvent<HTMLInputElement> ) => {
         const file = event.target.files?.[ 0 ];
@@ -101,7 +101,7 @@ function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detect
     );
 }
 
-export function TabPinImage() {
+export default function PinningImage() {
     // This will trigger the `Suspense` above...
     const provider = use( detectEthereumProvider );
 

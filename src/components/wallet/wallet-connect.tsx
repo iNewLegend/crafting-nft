@@ -1,6 +1,6 @@
 import React from "react";
 
-import WalletContext from "./wallet-context.ts";
+import WalletContext from "./wallet-context";
 
 import WalletProviders from "./wallet-providers";
 
