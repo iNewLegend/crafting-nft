@@ -2,18 +2,18 @@ import axios from "axios";
 
 import type { AxiosError, AxiosInstance, AxiosResponse, CreateAxiosDefaults } from "axios";
 
-import type { IPFSPiningGateway } from "../ipfs-definitions.ts";
+import type { IPFSPinningGateway } from "../ipfs-definitions";
 
-export abstract class PiningApiClientBase {
+export abstract class PinningApiClientBase {
     protected api!: AxiosInstance;
 
     // @ts-expect-error ts(2339)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static handshake( gateway: IPFSPiningGateway = this.getDefaultGateway() ): Promise<AxiosResponse | AxiosError | Error | boolean> {
+    public static handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ): Promise<AxiosResponse | AxiosError | Error | boolean> {
         throw new Error( "ForceMethodImplementation" );
     }
 
-    public static getDefaultGateway(): IPFSPiningGateway {
+    public static getDefaultGateway(): IPFSPinningGateway {
         throw new Error( "ForceMethodImplementation" );
     }
 
@@ -21,7 +21,7 @@ export abstract class PiningApiClientBase {
         return this.getDefaultGateway().name;
     }
 
-    public constructor( protected gateway: IPFSPiningGateway ) {
+    public constructor( protected gateway: IPFSPinningGateway ) {
         this.create();
     }
 

@@ -1,31 +1,31 @@
-.wallet {
-    .list {
-        @apply mb-5 mt-2;
+.walletProviders {
+    .walletList {
+        @apply p-5;
 
         .walletButton {
             @apply me-5;
         }
     }
 
-    .walletInfo {
-        @apply mt-5 flex flex-col items-center bg-gray-100 rounded-lg shadow-md;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-
-        img {
-            @apply w-20 h-20 object-cover mb-4;
-        }
-
-        .walletName {
-            @apply text-xl font-medium mb-2;
-        }
-
-        .walletAddress {
-            @apply text-sm text-gray-500;
-        }
-    }
-
-    .confirmButton {
+    .walletConnectButton {
         @apply w-full;
     }
 }
 
+
+.walletInfo {
+    @apply mt-5 flex flex-col items-center bg-gray-100 rounded-lg shadow-md;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+
+    img {
+        @apply w-20 h-20 object-cover mb-4;
+    }
+
+    .walletName {
+        @apply text-xl font-medium mb-2;
+    }
+
+    .walletAddress {
+        @apply text-sm text-gray-500;
+    }
+}

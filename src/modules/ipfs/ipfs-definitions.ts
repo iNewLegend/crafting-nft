@@ -4,7 +4,7 @@ export interface IPFSPublicGateway {
     responseTime: number;
 }
 
-export interface IPFSPiningGateway {
+export interface IPFSPinningGateway {
     /**
      * @internal
      */

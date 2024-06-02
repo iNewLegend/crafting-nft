@@ -1,10 +1,9 @@
 import React from "react";
 
-import useWalletStore from "./use-wallet-store.ts";
+import useWalletStore from "./use-wallet-store";
+import walletHandleConnect from "./wallet-handle-connect";
 
-import walletHandleConnect from "./wallet-handle-connect.ts";
-
-import type { IWallet } from "./wallet-definitions.ts";
+import type { IWallet } from "./wallet-definitions";
 
 export default function useWalletProviders() {
     const [ selectedWallet, setSelectedWallet ] = React.useState<EIP6963ProviderDetail>();

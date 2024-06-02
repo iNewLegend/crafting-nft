@@ -1,26 +1,26 @@
-import type { PiningApiClientBase } from "../../../modules/ipfs/apis/pining-api-client-base.ts";
-import type { IPFSPublicGateway } from "../../../modules/ipfs/ipfs-definitions.ts";
+import type { PinningApiClientBase } from "../../../modules/ipfs/apis/pinning-api-client-base";
+import type { IPFSPublicGateway } from "../../../modules/ipfs/ipfs-definitions";
 
-export type TTabPinImageFormState = {
+export type TPinningImageFormState = {
     name: string;
     description: string;
     image: ArrayBuffer | null;
     file: File | null;
-    piningGatewayApi: {
-        api: typeof PiningApiClientBase;
+    pinningGatewayApi: {
+        api: typeof PinningApiClientBase;
         name: string;
     } | null;
     publicGateways: IPFSPublicGateway[];
 };
 
-export type TTabPinImageFormActions =
+export type TPinningImageFormActions =
     | { type: 'SET_NAME'; payload: string }
     | { type: 'SET_DESCRIPTION'; payload: string }
     | { type: 'SET_IMAGE_FILE'; payload: { image: ArrayBuffer; file: File } }
-    | { type: 'SET_PINING_GATEWAY_API'; payload: TTabPinImageFormState['piningGatewayApi'] }
+    | { type: 'SET_PINNING_GATEWAY_API'; payload: TPinningImageFormState['pinningGatewayApi'] }
     | { type: 'SET_PUBLIC_GATEWAYS'; payload: IPFSPublicGateway[] };
 
-export function tabPinImageFormReducer( state: TTabPinImageFormState, action: TTabPinImageFormActions ): TTabPinImageFormState {
+export function pinningImageFormReducer( state: TPinningImageFormState, action: TPinningImageFormActions ): TPinningImageFormState {
     switch ( action.type ) {
         case 'SET_NAME':
             return { ... state, name: action.payload };
@@ -28,8 +28,8 @@ export function tabPinImageFormReducer( state: TTabPinImageFormState, action: TT
             return { ... state, description: action.payload };
         case 'SET_IMAGE_FILE':
             return { ... state, image: action.payload.image, file: action.payload.file };
-        case 'SET_PINING_GATEWAY_API':
-            return { ... state, piningGatewayApi: action.payload };
+        case 'SET_PINNING_GATEWAY_API':
+            return { ... state, pinningGatewayApi: action.payload };
         case 'SET_PUBLIC_GATEWAYS':
             return { ... state, publicGateways: action.payload };
         default:

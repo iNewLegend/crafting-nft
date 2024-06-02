@@ -1,0 +1,21 @@
+body {
+    @apply bg-gray-200 h-screen;
+}
+
+#layout-container {
+    position: relative;
+    min-height: 250px;
+    @apply ms-[150px] me-[150px];
+}
+
+#pages {
+    @apply pe-[100px] ps-[100px] pb-[100px];
+}
+
+#pages-divider {
+    // Above the navbar
+    z-index: 31;
+
+    position: relative;
+}
+
