@@ -1,6 +1,6 @@
-import { PinningApiClientBase } from "./pinning-api-client-base";
+import { PinningApiBase } from "./pinning-api-base.ts";
 
-import type { AxiosError } from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
 import type { IPFSPinningGateway } from "../ipfs-definitions";
 
 const DEFAULT_DOLPHIN_API_TOKEN_STORAGE_KEY = "api-dolphin-tokens",
@@ -11,11 +11,11 @@ type TTokens = {
     refresh: string;
 };
 
-export default class DolphinClient extends PinningApiClientBase {
+export default class DolphinApi extends PinningApiBase {
     private tokens: TTokens | undefined;
 
     public static async handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ) {
-        const api = new DolphinClient( gateway ),
+        const api = new DolphinApi( gateway ),
             tokens = api.getLocalTokens() || api.getStorageTokens();
 
         const currentIdentityChecksum =
@@ -25,7 +25,8 @@ export default class DolphinClient extends PinningApiClientBase {
         if ( tokens ) {
             const storedIdentityChecksum = api.getStorageIdentityChecksum();
 
-            const isIdentityChanged = gateway.fields.email?.length && storedIdentityChecksum !== currentIdentityChecksum;
+            const isIdentityChanged = gateway.fields.email?.length &&
+                storedIdentityChecksum !== currentIdentityChecksum;
 
             // Since the api should blind against the user, and the method is simple "handshake",
             // In other words, the method used to log in and to determine if the user is `logged in`,
@@ -34,17 +35,15 @@ export default class DolphinClient extends PinningApiClientBase {
             } else if ( await api.refreshToken( tokens.refresh ).catch( () => false ) ) {
                 api.setStorageTokens( api.getLocalTokens()! );
 
-                return true;
+                return api;
             }
         }
 
         try {
-            return await api.login().then( ( response ) => {
+            await api.login().then( ( response ) => {
                 if ( 200 === response.status ) {
                     api.setStorageTokens( response.data );
                     api.setStorageIdentityChecksum( currentIdentityChecksum );
-
-                    return true;
                 }
 
                 throw new Error( 'Internal error login failed' );
@@ -52,6 +51,8 @@ export default class DolphinClient extends PinningApiClientBase {
         } catch ( e ) {
             return e as AxiosError;
         }
+
+        return api;
     }
 
     public static getDefaultGateway(): IPFSPinningGateway {
@@ -69,8 +70,41 @@ export default class DolphinClient extends PinningApiClientBase {
             }
     }
 
+    protected getBaseCreateArgs( extend: any = {} ) {
+        const tokens = this.getLocalTokens() || this.getStorageTokens();
+
+        if ( ! tokens ) {
+            return super.getBaseCreateArgs( extend );
+        }
+
+        return super.getBaseCreateArgs( {
+            headers: {
+                Authorization: `Bearer ${ tokens.access }`
+            },
+            ... extend
+        } );
+
+    }
+
+    public pinFile( file: File, metadata: any ): Promise<AxiosResponse | AxiosError> {
+        const form = new FormData();
+
+        form.append( "file", file );
+        form.append( "metadata", JSON.stringify( metadata ) );
+
+        return this.client.post( '/documents/', form, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        } );
+    }
+
+    protected listPinnedFilesImpl(): Promise<AxiosResponse | AxiosError> {
+        return this.client.get( '/documents/?asc=false&is_api_directory=false&limit=0&offset=0&search=' );
+    }
+
     public async login( email = this.gateway.fields.email, password = this.gateway.fields.password ) {
-        const response = await this.api.post( '/auth/login/', {
+        const response = await this.client.post( '/auth/login/', {
             email,
             password
         } );
@@ -83,7 +117,7 @@ export default class DolphinClient extends PinningApiClientBase {
     }
 
     public async refreshToken( refreshToken: string ) {
-        const response = await this.api.post( '/auth/token/refresh/', {
+        const response = await this.client.post( '/auth/token/refresh/', {
             refresh: refreshToken,
         } );
 
