@@ -9,12 +9,14 @@ import LoadingDots from "../loading/loading-dots";
 
 const PageHome = React.lazy( () => import( "./home" ) ),
     PagePinningImage = React.lazy( () => import( "./pinning-image" ) ),
-    PagePinningGateways = React.lazy( () => import( "./pinning-gateways" ) );
+    PagePinningGateways = React.lazy( () => import( "./pinning-gateways" ) ),
+    PagePinningList = React.lazy( () => import( "./pinning-list" ) );
 
 const pages = [
     { name: "home", label: "Home" },
     { name: "pinning-gateways", label: "Pinning Gateways" },
     { name: "ping-image", label: "Pinning Image" },
+    { name: "pinning-list", label: "Pinning List" }
 ];
 
 const Pages = () => {
@@ -33,6 +35,9 @@ const Pages = () => {
 
             case "pinning-gateways":
                 return <PagePinningGateways/>;
+
+            case "pinning-list":
+                return <PagePinningList/>;
         }
     };
 

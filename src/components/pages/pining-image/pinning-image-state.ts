@@ -1,4 +1,4 @@
-import type { PinningApiClientBase } from "../../../modules/ipfs/apis/pinning-api-client-base";
+import type { PinningApiBase } from "../../../modules/ipfs/apis/pinning-api-base.ts";
 import type { IPFSPublicGateway } from "../../../modules/ipfs/ipfs-definitions";
 
 export type TPinningImageFormState = {
@@ -7,7 +7,7 @@ export type TPinningImageFormState = {
     image: ArrayBuffer | null;
     file: File | null;
     pinningGatewayApi: {
-        api: typeof PinningApiClientBase;
+        api: typeof PinningApiBase;
         name: string;
     } | null;
     publicGateways: IPFSPublicGateway[];

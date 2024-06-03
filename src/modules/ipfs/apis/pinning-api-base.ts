@@ -105,7 +105,6 @@ export abstract class PinningApiBase {
 
     public abstract pinFile( file: File, metadata: any ): Promise<AxiosResponse | AxiosError>;
 
-
     public getClientInstance() {
         return this.client;
     }
