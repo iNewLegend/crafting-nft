@@ -27,7 +27,7 @@ export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { on
     };
 
     const renderGateway = ( { gateway, key }: { gateway: IPFSPublicGateway, key: string } ) => (
-        <SelectItem key={ key }>
+        <SelectItem key={ key } endContent={ <span className="text-tiny">{ gateway.responseTime }ms</span> }>
             { gateway.name }
         </SelectItem>
     );
