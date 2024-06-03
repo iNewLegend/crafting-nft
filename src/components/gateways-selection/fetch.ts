@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { TFetchGatewaysProps } from "./definitions.ts";
-import type { PinningApiClientBase } from "../../modules/ipfs/apis/pinning-api-client-base.ts";
+import type { PinningApiBase } from "../../modules/ipfs/apis/pinning-api-base.ts";
 
 import use from "../../utils/react-use.ts";
 
@@ -14,8 +14,8 @@ import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
  * Used in order to utilize the `React.Suspense` feature in nested `React.Suspense` components
  * Without this it will trigger the `React.Suspense` in the component above.
  */
-export const FetchPinningGateways: React.FC<TFetchGatewaysProps<typeof PinningApiClientBase[]>> = ( { ui } ) => {
-    const [ gateways ] = React.useState<typeof PinningApiClientBase[]>(
+export const FetchPinningGateways: React.FC<TFetchGatewaysProps<typeof PinningApiBase[]>> = ( { ui } ) => {
+    const [ gateways ] = React.useState<typeof PinningApiBase[]>(
         use( ipfsPingingApisGetActive, {
             cacheTTL: 1000 * 60 * 15,
         } )

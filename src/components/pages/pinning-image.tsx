@@ -85,9 +85,11 @@ function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detect
             { state.image && <Image src={ URL.createObjectURL( state.file! ) }/> }
 
             <React.Suspense fallback={ <span className="pb-2 border-2 border-dotted"><LoadingDots/></span> }>
-                <SelectPinningGateway onSelect={ ( api ) => {
-                    dispatch( { type: "SET_PINNING_GATEWAY_API", payload: { api, name: api.name } } );
-                } }/>
+                <SelectPinningGateway
+                    tooltipContent={ <span>The selected gateway will be used to pin the image to IPFS</span> }
+                    onSelect={ ( api ) => {
+                        dispatch( { type: "SET_PINNING_GATEWAY_API", payload: { api, name: api.name } } );
+                    } }/>
             </React.Suspense>
 
             <React.Suspense fallback={ <span className="pb-2 border-2 border-dotted"><LoadingDots/></span> }>

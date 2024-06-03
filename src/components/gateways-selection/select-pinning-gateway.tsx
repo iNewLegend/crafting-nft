@@ -1,13 +1,19 @@
 import React from "react";
-import type { TSelectPinningGatewayProps } from "./definitions.ts";
-import type { PinningApiClientBase } from "../../modules/ipfs/apis/pinning-api-client-base.ts";
+
 import { SelectItem, Select, Tooltip } from "@nextui-org/react";
 import { FetchPinningGateways } from "./fetch.ts";
 
-export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( { onSelect } ) => {
+import type { TSelectPinningGatewayProps } from "./definitions.ts";
+import type { PinningApiBase } from "../../modules/ipfs/apis/pinning-api-base.ts";
+
+export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( {
+    onSelect,
+    color = "primary",
+    tooltipContent,
+} ) => {
     const [ selectedPinningGateway, setSelectedPinningGateway ] = React.useState( -1 );
 
-    const onGatewayChange = ( e: React.ChangeEvent<HTMLSelectElement>, gateways: typeof PinningApiClientBase[] ) => {
+    const onGatewayChange = ( e: React.ChangeEvent<HTMLSelectElement>, gateways: typeof PinningApiBase[] ) => {
         const selectedIndex = Number( e.target.value );
 
         setTimeout( () => onSelect( gateways[ selectedIndex ] ) );
@@ -15,15 +21,15 @@ export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( { on
         setSelectedPinningGateway( selectedIndex );
     };
 
-    const renderGateway = ( { gateway, key }: { gateway: typeof PinningApiClientBase, key: string } ) => (
+    const renderGateway = ( { gateway, key }: { gateway: typeof PinningApiBase, key: string } ) => (
         <SelectItem key={ key }>
             { gateway.getName() }
         </SelectItem>
     );
 
-    const renderGateways = ( { gateways }: { gateways: typeof PinningApiClientBase[] } ) => (
+    const renderGateways = ( { gateways }: { gateways: typeof PinningApiBase[] } ) => (
         <Select
-            color="primary"
+            color={ color }
             label="IPFS Pinning Gateway"
             placeholder="Select a gateway"
             items={ gateways }
@@ -35,17 +41,20 @@ export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( { on
         </Select>
     );
 
-    const TooltipContents = (
-        <div className="px-1 py-2">
-            <div className="text-small font-bold">Pinning Gateways</div>
-            <div className="text-tiny">The selected gateway will be used to pin the image to IPFS</div>
-        </div>
+    const Wrapper: React.FC<React.PropsWithChildren> = ( { children } ) => (
+        tooltipContent ?
+            <Tooltip color="primary" closeDelay={ 100 } placement={ "right" } showArrow={ true }
+                     content={ <div className="px-1 py-2">
+                         <div className="text-small font-bold">Pinning Gateways</div>
+                         <div className="text-tiny">{ tooltipContent } </div>
+                     </div> }>
+                { children }
+            </Tooltip> : <>{ children }</>
     );
 
     return (
-        <Tooltip color="primary" closeDelay={ 100 } placement={ "right" } showArrow={ true }
-                 content={ TooltipContents }>
+        <Wrapper>
             <div><FetchPinningGateways ui={ ( { gateways } ) => renderGateways( { gateways } ) }/></div>
-        </Tooltip>
+        </Wrapper>
     );
 };
