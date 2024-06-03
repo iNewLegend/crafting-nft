@@ -9,7 +9,9 @@ import use from "../../utils/react-use";
 import LoadingDots from "../loading/loading-dots";
 
 import { pinningImageFormReducer, type TPinningImageFormState } from "./pining-image/pinning-image-state";
-import { SelectPinningGateway, SelectPublicGateways } from "./pining-image/pinning-image-gateway-selection";
+
+import { SelectPublicGateways } from "../gateways-selection/select-public-gateways.tsx";
+import { SelectPinningGateway } from "../gateways-selection/select-pinning-gateway.tsx";
 
 function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detectEthereumProvider>> | null } ) {
     const initialState: TPinningImageFormState = {
@@ -83,9 +85,11 @@ function CreatePinImageForm( props: { provider: ReturnType<Awaited<typeof detect
             { state.image && <Image src={ URL.createObjectURL( state.file! ) }/> }
 
             <React.Suspense fallback={ <span className="pb-2 border-2 border-dotted"><LoadingDots/></span> }>
-                <SelectPinningGateway onSelect={ ( api ) => {
-                    dispatch( { type: "SET_PINNING_GATEWAY_API", payload: { api, name: api.name } } );
-                } }/>
+                <SelectPinningGateway
+                    tooltipContent={ <span>The selected gateway will be used to pin the image to IPFS</span> }
+                    onSelect={ ( api ) => {
+                        dispatch( { type: "SET_PINNING_GATEWAY_API", payload: { api, name: api.name } } );
+                    } }/>
             </React.Suspense>
 
             <React.Suspense fallback={ <span className="pb-2 border-2 border-dotted"><LoadingDots/></span> }>
