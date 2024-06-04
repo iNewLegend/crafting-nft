@@ -1,39 +1,62 @@
-import { ipfsPingingApisGetAll } from "./apis/";
+import { createHeliaHTTP } from "@helia/http";
+import { httpGatewayRouting } from "@helia/routers";
+import { importer } from 'ipfs-unixfs-importer';
 
-import { type ProxyOptions } from 'vite';
+import { MemoryBlockstore } from 'blockstore-core/memory'
 
-const pinningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getDefaultGateway() );
+import type { IPFSPublicGateway } from "./ipfs-definitions.ts";
 
-export function ipfsExportProxyForVite() {
-    const proxy: Record<string, string | ProxyOptions> = {};
-
-    for ( const [ , gateway ] of Object.entries( pinningGateways ) ) {
-        if ( ! gateway.proxy ) {
-            continue;
-        }
-
-        proxy[ `/${ gateway.proxy.pathname }` ] = {
-            target: gateway.fields.endpointUrl,
-            changeOrigin: true,
-            configure: ( proxy ) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                proxy.on( 'error', ( err, _req, _res ) => {
-                    console.debug( 'proxy error', err );
-                } );
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                proxy.on( 'proxyReq', ( proxyReq, req, _res ) => {
-                    console.debug( `Forwarding Request to the Target: ${ req.url } from the Proxy: ${ proxyReq.path }` );
-                } );
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                proxy.on( 'proxyRes', ( proxyRes, req, _res ) => {
-                    console.debug( 'Received Response from the Target:', proxyRes.statusCode, req.url );
-                } );
-            },
-            rewrite: ( path ) => path.replace( `/${ gateway.proxy!.pathname }`, '' ),
-        };
-    }
-
-    console.debug( proxy );
-
-    return proxy;
+export async function ipfsCreateHeliaWithinGateways( gateways: Array<IPFSPublicGateway> ) {
+    return await createHeliaHTTP( {
+        routers: [ httpGatewayRouting( { gateways: gateways.map( ( gateway ) => gateway.url ) } ) ],
+    } );
 }
+
+export function ipfsCreateTimoutAbortController( timeout: number ) {
+    return new class extends AbortController {
+        constructor() {
+            super();
+
+            setTimeout( () => {
+                this.abort();
+            }, timeout );
+        }
+    }
+}
+
+/**
+ * Generate cid that used in pinning services.
+ */
+export async function ipfsGenerateCidFromFile( file: File ): Promise<string> {
+    return new Promise( ( resolve, reject ) => {
+        const reader = new FileReader();
+
+        reader.onloadend = async () => {
+            if ( reader.result ) {
+                const fileCandidate = {
+                    path: file.name,
+                    content: new Uint8Array( reader.result as ArrayBuffer ),
+                };
+
+                // @ts-expect-error ts(2339)
+                const result = importer( fileCandidate, new MemoryBlockstore(), {
+                    cidVersion: 0,
+                    onlyHash: true,
+                    hashAlg: "sha2-256",
+                } );
+
+                const it = await result.next();
+
+                resolve( it.value!.cid.toString() );
+            } else {
+                reject( new Error( 'FileReader result is null' ) );
+            }
+        };
+
+        reader.onerror = () => {
+            reject( new Error( 'Failed to read file' ) );
+        };
+
+        reader.readAsArrayBuffer( file );
+    } );
+};

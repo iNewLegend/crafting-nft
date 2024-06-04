@@ -7,10 +7,14 @@ import type { PinningApiBase } from "../../modules/ipfs/apis/pinning-api-base.ts
 
 export type TFetchGatewaysProps<TTypeOfGateway> = {
     ui: ( { gateways }: { gateways: TTypeOfGateway } ) => React.ReactElement;
+
+    useStorageCache?: boolean;
 }
 
 export type TSelectPinningGatewayProps = {
     onSelect: ( pinningApiGateway: typeof PinningApiBase ) => void;
+
+    isDisabled?: boolean;
 
     /**
      * @default "primary"
@@ -21,5 +25,7 @@ export type TSelectPinningGatewayProps = {
 };
 
 export type TSelectPublicGatewaysProps = {
+    isDisabled?: boolean;
+
     onSelect: ( publicGateways: IPFSPublicGateway[] ) => void;
 };

@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 
 import { defineConfig } from 'vite';
 
-import { ipfsExportProxyForVite } from "./src/modules/ipfs/ipfs-utils"
+import { ipfsExportProxyForVite } from "./src/modules/ipfs/ipfs-proxy-for-vite"
 
 const proxy = ipfsExportProxyForVite();
 

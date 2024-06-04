@@ -7,7 +7,7 @@ import type { TSelectPublicGatewaysProps } from "./definitions.ts";
 
 import type { IPFSPublicGateway } from "../../modules/ipfs/ipfs-definitions.ts";
 
-export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { onSelect } ) => {
+export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { onSelect, isDisabled } ) => {
     const [ selectedPublicGateways, setSelectedPublicGateways ] = React.useState<string[]>( [] );
 
     const onGatewaysChange = ( event: React.ChangeEvent<HTMLSelectElement> ) => {
@@ -27,7 +27,7 @@ export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { on
     };
 
     const renderGateway = ( { gateway, key }: { gateway: IPFSPublicGateway, key: string } ) => (
-        <SelectItem key={ key }>
+        <SelectItem key={ key } endContent={ <span className="text-tiny">{ gateway.responseTime }ms</span> }>
             { gateway.name }
         </SelectItem>
     );
@@ -43,6 +43,7 @@ export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { on
             onChange={ onGatewaysChange }
             onClose={ () => onGatewaysSet( gateways ) }
             isRequired={ ! selectedPublicGateways.length }
+            isDisabled={ isDisabled }
         >
             { gateway => renderGateway( { gateway, key: gateways.indexOf( gateway ).toString() } ) }
         </Select>
@@ -60,7 +61,11 @@ export const SelectPublicGateways: React.FC<TSelectPublicGatewaysProps> = ( { on
     return (
         <Tooltip color="secondary" closeDelay={ 100 } placement={ "right" } showArrow={ true }
                  content={ TooltipContents }>
-            <div><FetchPublicGateways ui={ ( { gateways } ) => renderGateways( { gateways } ) }/></div>
+            <div>
+                <FetchPublicGateways useStorageCache={ true } ui={
+                    ( { gateways } ) => renderGateways( { gateways } )
+                }/>
+            </div>
         </Tooltip>
     );
 };
