@@ -96,7 +96,7 @@ export abstract class PinningApiBase {
     }
 
     private mapToCommonPinFileStructure( response: any ): CommonPinStructure {
-        const dataItem = Array.isArray( response.data.data ) ? response.data.data[ 0 ] : response.data.data;
+        const dataItem = Array.isArray( response.data.data ) ? response.data.data[ 0 ] : response.data;
 
         const commonItem: CommonPinStructure = {
             ipfsHash: dataItem.IpfsHash || dataItem.cid,
