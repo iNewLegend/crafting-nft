@@ -8,6 +8,7 @@ import type { PinningApiBase } from "../../modules/ipfs/apis/pinning-api-base.ts
 
 export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( {
     onSelect,
+    isDisabled = false,
     color = "primary",
     tooltipContent,
 } ) => {
@@ -36,6 +37,7 @@ export const SelectPinningGateway: React.FC<TSelectPinningGatewayProps> = ( {
             selectedKeys={ [ selectedPinningGateway.toString() ] }
             onChange={ ( e ) => onGatewayChange( e, gateways ) }
             isRequired={ selectedPinningGateway === -1 }
+            isDisabled={ isDisabled }
         >
             { gateway => renderGateway( { gateway, key: gateways.indexOf( gateway ).toString() } ) }
         </Select>
