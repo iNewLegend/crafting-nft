@@ -46,7 +46,7 @@ const PinningList: React.FC = () => {
                         layout="fixed"
                     >
                         <TableHeader>
-                            <TableColumn className="w-[15%]">File Name</TableColumn>
+                            <TableColumn className="w-[15%]">Name</TableColumn>
                             <TableColumn className="w-[25%]">IPFS Hash</TableColumn>
                             <TableColumn className="w-[5%]">File Size</TableColumn>
                             <TableColumn className="w-[7.5%]">MIME Type</TableColumn>
@@ -59,7 +59,7 @@ const PinningList: React.FC = () => {
                                     <TableCell>{ file.ipfsHash }</TableCell>
                                     <TableCell>{ file.fileSize }</TableCell>
                                     <TableCell>{ file.mimeType }</TableCell>
-                                    <TableCell>{ file.datePinnedOrCreated }</TableCell>
+                                    <TableCell>{ new Date( file.datePinnedOrCreated ).toISOString() }</TableCell>
                                 </TableRow>
                             ) ) }
                         </TableBody>
