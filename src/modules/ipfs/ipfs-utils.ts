@@ -1,5 +1,32 @@
+import { createHeliaHTTP } from "@helia/http";
+import { httpGatewayRouting } from "@helia/routers";
+import { trustlessGateway } from "@helia/block-brokers";
+import { importer } from 'ipfs-unixfs-importer';
 
 import { MemoryBlockstore } from 'blockstore-core/memory'
+
+import type { IPFSPublicGateway } from "./ipfs-definitions.ts";
+
+export async function ipfsCreateHeliaWithinGateways( gateways: Array<IPFSPublicGateway> ) {
+    return await createHeliaHTTP( {
+        routers: [ httpGatewayRouting( { gateways: gateways.map( ( gateway ) => gateway.url ) } ) ],
+        blockBrokers: [
+            trustlessGateway( { allowLocal: true, allowInsecure: true } ),
+        ],
+    } );
+}
+
+export function ipfsCreateTimoutAbortController( timeout: number ) {
+    return new class extends AbortController {
+        constructor() {
+            super();
+
+            setTimeout( () => {
+                this.abort();
+            }, timeout );
+        }
+    }
+}
 
 /**
  * Generate cid that used in pinning services.
