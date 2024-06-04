@@ -45,11 +45,11 @@ export default class PinataClient extends PinningApiBase {
         } );
     }
 
-    public pinFile( file: File, metadata: any ): Promise<AxiosResponse | AxiosError> {
+    protected pinFileImpl( file: File, metadata: any ): Promise<AxiosResponse | AxiosError> {
         const form = new FormData();
 
-        form.append("file", file);
-        form.append("pinataMetadata", JSON.stringify(metadata));
+        form.append( "file", file );
+        form.append( "pinataMetadata", JSON.stringify( metadata ) );
 
         return this.client.post( '/pinning/pinFileToIPFS', form, {
             headers: {
@@ -63,7 +63,7 @@ export default class PinataClient extends PinningApiBase {
     }
 
     public async testAuthentication() {
-        const response = await this.client.get( '/data/testAuthentication');
+        const response = await this.client.get( '/data/testAuthentication' );
 
         if ( response.status === 200 ) {
             // Fine for the demo.

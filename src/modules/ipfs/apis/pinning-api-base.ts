@@ -2,7 +2,7 @@ import type { AxiosError, AxiosInstance, AxiosResponse, CreateAxiosDefaults } fr
 import axios from "axios";
 
 import type { IPFSPinningGateway } from "../ipfs-definitions";
-import type { CommonListStructure } from "./definitions.ts";
+import type { CommonListStructure, CommonPinStructure } from "./definitions.ts";
 
 export abstract class PinningApiBase {
     private static cachedInstance: PinningApiBase | undefined;
@@ -58,6 +58,8 @@ export abstract class PinningApiBase {
 
     protected abstract listPinnedFilesImpl(): Promise<AxiosResponse | AxiosError>;
 
+    protected abstract pinFileImpl( file: File, metadata: any ): Promise<AxiosResponse | AxiosError>;
+
     private create() {
         const args = this.gateway.proxy ? this.getProxyCreateArgs() : this.getBaseCreateArgs();
 
@@ -93,6 +95,26 @@ export abstract class PinningApiBase {
         return commonStructureArray;
     }
 
+    private mapToCommonPinFileStructure( response: any ): CommonPinStructure {
+        const dataItem = Array.isArray( response.data.data ) ? response.data.data[ 0 ] : response.data.data;
+
+        const commonItem: CommonPinStructure = {
+            ipfsHash: dataItem.IpfsHash || dataItem.cid,
+            fileSize: dataItem.PinSize || dataItem.size_in_bytes,
+            timestamp: dataItem.Timestamp || dataItem.created,
+            additionalFields: {}
+        };
+
+        // Add any additional fields to additionalFields
+        Object.keys( dataItem ).forEach( ( key ) => {
+            if ( ! [ 'IpfsHash', 'cid', 'PinSize', 'size_in_bytes', 'Timestamp', 'created' ].includes( key ) ) {
+                commonItem.additionalFields[ key ] = dataItem[ key ];
+            }
+        } );
+
+        return commonItem;
+    }
+
     public async listPinnedFiles() {
         const response = await this.listPinnedFilesImpl();
 
@@ -103,7 +125,16 @@ export abstract class PinningApiBase {
         throw new Error( "Failed to list pinned files" );
     }
 
-    public abstract pinFile( file: File, metadata: any ): Promise<AxiosResponse | AxiosError>;
+    public async pinFile( file: File, metadata: any ) {
+        const response = await this.pinFileImpl( file, metadata );
+
+        if ( response.status === 200 ) {
+            return this.mapToCommonPinFileStructure( response );
+        }
+
+
+        throw new Error( "Failed to pin file" );
+    }
 
     public getClientInstance() {
         return this.client;

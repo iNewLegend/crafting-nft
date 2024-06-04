@@ -86,11 +86,13 @@ export default class DolphinApi extends PinningApiBase {
 
     }
 
-    public pinFile( file: File, metadata: any ): Promise<AxiosResponse | AxiosError> {
+    public pinFileImpl( file: File, metadata: any ): Promise<AxiosResponse | AxiosError> {
         const form = new FormData();
 
-        form.append( "file", file );
-        form.append( "metadata", JSON.stringify( metadata ) );
+        form.append( "files", file );
+
+        // Required by the api.
+        form.append( "parent", "" );
 
         return this.client.post( '/documents/', form, {
             headers: {
