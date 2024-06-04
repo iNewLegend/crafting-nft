@@ -30,7 +30,7 @@ const PinningList: React.FC = () => {
         }
 
         const pinnedFilesWithinGateways = use( () => fetchPinnedFilesFromGateways( gateways ), {
-            cacheTTL: 1000 * 60 * 15,
+            cacheTTL: 0,
         } );
 
         return <>
