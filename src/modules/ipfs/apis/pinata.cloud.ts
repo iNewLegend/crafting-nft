@@ -1,13 +1,13 @@
 import { PinningApiBase } from './pinning-api-base.ts';
 
 import type { AxiosError, AxiosResponse } from "axios";
-import type { IPFSPinningGateway } from '../ipfs-definitions';
+import type { IPFSPinningGatewayConfig } from '../ipfs-definitions';
 
 const DEFAULT_PINATA_API_TOKEN_STORAGE_KEY = 'api-pinata-token';
 
 export default class PinataClient extends PinningApiBase {
-    public static async handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ) {
-        const api = new PinataClient( gateway );
+    public static async handshake( config: IPFSPinningGatewayConfig = this.getConfig() ) {
+        const api = new PinataClient( config );
 
         try {
             const response = await api.testAuthentication();
@@ -22,7 +22,7 @@ export default class PinataClient extends PinningApiBase {
         throw new Error( 'Failed to authenticate with the gateway' );
     }
 
-    public static getDefaultGateway(): IPFSPinningGateway {
+    public static getConfig(): IPFSPinningGatewayConfig {
         return {
             "name": "pinata.cloud",
             "fields": {
@@ -33,7 +33,7 @@ export default class PinataClient extends PinningApiBase {
     }
 
     protected getBaseCreateArgs() {
-        const fieldToken = this.gateway.fields.token,
+        const fieldToken = this.config.fields.token,
             storageToken = this.getStorageToken(),
             token = fieldToken?.length && fieldToken !== storageToken ?
                 fieldToken : storageToken;

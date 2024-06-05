@@ -2,7 +2,7 @@ import { ipfsPingingApisGetAll } from "./apis/";
 
 import type { ProxyOptions } from "vite";
 
-const pinningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getDefaultGateway() );
+const pinningGateways = ( await ipfsPingingApisGetAll() ).map( gateway => gateway.getConfig() );
 
 
 export function ipfsExportProxyForVite() {

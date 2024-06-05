@@ -6,17 +6,17 @@ import { AxiosError } from "axios";
 
 import { ipfsPingingApisGetAll } from "../../modules/ipfs/apis";
 
-import type { IPFSPinningGateway } from "../../modules/ipfs/ipfs-definitions";
+import type { IPFSPinningGatewayConfig } from "../../modules/ipfs/ipfs-definitions";
 
 const pinningGatewayApis = await ipfsPingingApisGetAll();
 
 const mappedPinningGateways = ( ( await ipfsPingingApisGetAll() ) ).map( ( gateway, index ) => ( {
     index,
-    ... gateway.getDefaultGateway(),
+    ... gateway.getConfig(),
 } ) );
 
 export default function PinningGateways() {
-    const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSPinningGateway | null>( null );
+    const [ selectedGateway, setSelectedGateway ] = React.useState<IPFSPinningGatewayConfig | null>( null );
     const [ shouldDisableFields, setShouldDisableFields ] = React.useState( false );
     const [ isConnected, setIsConnected ] = React.useState( false );
     const [ apiError, setApiError ] = React.useState<AxiosError | Error | null>( null );
