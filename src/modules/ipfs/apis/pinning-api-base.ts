@@ -1,7 +1,7 @@
 import type { AxiosError, AxiosInstance, AxiosResponse, CreateAxiosDefaults } from "axios";
 import axios from "axios";
 
-import type { IPFSPinningGateway } from "../ipfs-definitions";
+import type { IPFSPinningGatewayConfig } from "../ipfs-definitions";
 import type { CommonListStructure, CommonPinStructure } from "./definitions.ts";
 
 export abstract class PinningApiBase {
@@ -11,16 +11,16 @@ export abstract class PinningApiBase {
 
     // @ts-expect-error ts(2339)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public static handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ): Promise<AxiosError | Error | PinningApiBase> {
+    public static handshake( config: IPFSPinningGatewayConfig = this.getConfig() ): Promise<AxiosError | Error | PinningApiBase> {
         throw new Error( "ForceMethodImplementation" );
     }
 
-    public static getDefaultGateway(): IPFSPinningGateway {
+    public static getConfig(): IPFSPinningGatewayConfig {
         throw new Error( "ForceMethodImplementation" );
     }
 
     public static getName(): string {
-        return this.getDefaultGateway().name;
+        return this.getConfig().name;
     }
 
     public static getCachedInstance(): PinningApiBase {
@@ -31,7 +31,7 @@ export abstract class PinningApiBase {
         return this.cachedInstance;
     }
 
-    public constructor( protected gateway: IPFSPinningGateway ) {
+    public constructor( protected config: IPFSPinningGatewayConfig ) {
         this.create();
 
         const staticThis = ( this.constructor as typeof PinningApiBase );
@@ -41,17 +41,17 @@ export abstract class PinningApiBase {
 
     protected getBaseCreateArgs( extend: CreateAxiosDefaults = {} ) {
         return {
-            baseURL: this.gateway.fields.endpointUrl,
+            baseURL: this.config.fields.endpointUrl,
             ... extend,
         }
     }
 
     protected getProxyCreateArgs( extend: CreateAxiosDefaults = {} ) {
-        const { gateway } = this,
-            host = gateway.proxy!.host === "{{location.host}}" ? window.location.host : gateway.proxy!.host;
+        const { config } = this,
+            host = config.proxy!.host === "{{location.host}}" ? window.location.host : config.proxy!.host;
 
         return this.getBaseCreateArgs( {
-            baseURL: new URL( `${ location.protocol }//${ host }/${ gateway.proxy!.pathname }/` ).toString(),
+            baseURL: new URL( `${ location.protocol }//${ host }/${ config.proxy!.pathname }/` ).toString(),
             ... extend,
         } );
     }
@@ -61,7 +61,7 @@ export abstract class PinningApiBase {
     protected abstract pinFileImpl( file: File, metadata: any ): Promise<AxiosResponse | AxiosError>;
 
     private create() {
-        const args = this.gateway.proxy ? this.getProxyCreateArgs() : this.getBaseCreateArgs();
+        const args = this.config.proxy ? this.getProxyCreateArgs() : this.getBaseCreateArgs();
 
         this.client = axios.create( args );
 

@@ -1,7 +1,7 @@
 import { PinningApiBase } from "./pinning-api-base.ts";
 
 import type { AxiosError, AxiosResponse } from "axios";
-import type { IPFSPinningGateway } from "../ipfs-definitions";
+import type { IPFSPinningGatewayConfig } from "../ipfs-definitions";
 
 const DEFAULT_DOLPHIN_API_TOKEN_STORAGE_KEY = "api-dolphin-tokens",
     DEFAULT_DOLPHIN_API_IDENTITY_STORAGE_KEY = "api-dolphin-identity";
@@ -14,18 +14,18 @@ type TTokens = {
 export default class DolphinApi extends PinningApiBase {
     private tokens: TTokens | undefined;
 
-    public static async handshake( gateway: IPFSPinningGateway = this.getDefaultGateway() ) {
-        const api = new DolphinApi( gateway ),
+    public static async handshake( config: IPFSPinningGatewayConfig = this.getConfig() ) {
+        const api = new DolphinApi( config ),
             tokens = api.getLocalTokens() || api.getStorageTokens();
 
         const currentIdentityChecksum =
-            await api.generateIdentityChecksum( gateway.fields.email!, gateway.fields.password! );
+            await api.generateIdentityChecksum( config.fields.email!, config.fields.password! );
 
 
         if ( tokens ) {
             const storedIdentityChecksum = api.getStorageIdentityChecksum();
 
-            const isIdentityChanged = gateway.fields.email?.length &&
+            const isIdentityChanged = config.fields.email?.length &&
                 storedIdentityChecksum !== currentIdentityChecksum;
 
             // Since the api should blind against the user, and the method is simple "handshake",
@@ -55,7 +55,7 @@ export default class DolphinApi extends PinningApiBase {
         return api;
     }
 
-    public static getDefaultGateway(): IPFSPinningGateway {
+    public static getConfig(): IPFSPinningGatewayConfig {
         return {
                 "name": "dolphin.io",
                 "fields": {
@@ -105,7 +105,7 @@ export default class DolphinApi extends PinningApiBase {
         return this.client.get( '/documents/?asc=false&is_api_directory=false&limit=0&offset=0&search=' );
     }
 
-    public async login( email = this.gateway.fields.email, password = this.gateway.fields.password ) {
+    public async login( email = this.config.fields.email, password = this.config.fields.password ) {
         const response = await this.client.post( '/auth/login/', {
             email,
             password
